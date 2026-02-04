@@ -31,7 +31,7 @@ const cardStyle = {
 export default function Dashboard() {
   return (
     <DashboardLayout>
-      {/* ================= HEADER ================= */}
+      
       <Box mb={4}>
         <Typography variant="h4" fontWeight={700}>
           Welcome to Dashboard 
@@ -39,7 +39,7 @@ export default function Dashboard() {
         
       </Box>
 
-      {/* ================= STATS ================= */}
+   
       <Grid container spacing={3} mb={4}>
         {[
           { title: "Total Logins", value: "24" },
@@ -68,7 +68,7 @@ export default function Dashboard() {
         ))}
       </Grid>
 
-      {/* ================= MAIN CONTENT ================= */}
+  
       <Grid container spacing={3}>
         {/* PROFILE */}
         <Grid item xs={12} md={4}>
@@ -107,7 +107,6 @@ export default function Dashboard() {
           </Card>
         </Grid>
 
-        {/* ACTIVITY */}
         <Grid item xs={12} md={8}>
           <Card sx={cardStyle}>
             <CardContent>
@@ -147,7 +146,6 @@ export default function Dashboard() {
           </Card>
         </Grid>
 
-        {/* RECENT LOGINS */}
         <Grid item xs={12}>
           <Card sx={cardStyle}>
             <CardContent>

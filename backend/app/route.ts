@@ -12,12 +12,12 @@ import {
 
 const router = Router();
 
-/* ================= NORMAL AUTH ROUTES ================= */
+
 router.use("/auth", authRoutes);
 
-/* ================= GOOGLE OAUTH ================= */
 
-// Step 1: redirect to Google
+
+
 router.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -25,7 +25,7 @@ router.get(
   })
 );
 
-// Step 2: Google callback
+
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
@@ -35,7 +35,7 @@ router.get(
   (req: any, res) => {
     const user = req.user;
 
-    // 🔑 Generate tokens
+  
     const accessToken = generateAccessToken({
       id: user._id.toString(),
     });
@@ -44,17 +44,16 @@ router.get(
       id: user._id.toString(),
     });
 
-    // 🍪 Store refresh token
+    
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "lax",   // 🔥 IMPORTANT
+      sameSite: "lax",   
       secure: false,
-    //   sameSite: "strict",
-    //   secure: process.env.NODE_ENV === "production",
+   
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // ✅ Redirect with access token
+
     res.redirect(
       `${process.env.CLIENT_URL}/oauth-success?token=${accessToken}`
     );
@@ -64,11 +63,3 @@ router.get(
 export default router;
 
 
-// import { Router } from "express";
-// import authRoutes from "./auth/routes/auth.routes";
-
-// const router = Router();
-
-// router.use("/auth", authRoutes);
-
-// export default router;

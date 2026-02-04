@@ -67,11 +67,7 @@ export default function Register({
   return (
     <Card
       sx={{
-        // width: 420,
-        // p: 3,
-        // borderRadius: "16px",
      width: 420,
-    //  height: 500,
     p: 4,
     borderRadius: 3,
     background: "linear-gradient(135deg, #ffffff 0%, #92a1b6 100%)",

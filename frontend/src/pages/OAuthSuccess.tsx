@@ -8,20 +8,7 @@ export default function OAuthSuccess() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // useEffect(() => {
-  //   const token = params.get("token");
-
-  //   if (!token) {
-  //     navigate("/");
-  //     return;
-  //   }
-
-  //   // save token
-  //   login(token);
-
-  //   // redirect to dashboard
-  //  navigate("/dashboard", { replace: true });
-  // }, []);
+ 
   useEffect(() => {
   const token = params.get("token");
 

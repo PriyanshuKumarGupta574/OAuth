@@ -39,7 +39,7 @@ router.get(
     const accessToken = generateAccessToken({ id: user._id });
     const refreshToken = generateRefreshToken({ id: user._id });
 
-    // 🔥 REQUIRED
+    
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",

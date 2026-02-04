@@ -9,7 +9,7 @@ import { useState } from "react";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyOtp from "./pages/VerifyOtp";
-import OAuthSuccess from "./pages/OAuthSuccess"; // ✅ ADD THIS
+import OAuthSuccess from "./pages/OAuthSuccess"; 
 
 function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
@@ -33,7 +33,7 @@ export default function App() {
         
           <Route path="/" element={<AuthPage />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/oauth-success" element={<OAuthSuccess />} /> {/* ✅ */}
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
 
        
           <Route path="/forgot-password" element={<ForgotPassword />} />
