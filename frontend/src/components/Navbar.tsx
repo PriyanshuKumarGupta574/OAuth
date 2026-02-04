@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     <AppBar position="static">
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between",  }}>
         <Typography variant="h6">Auth System</Typography>
 
         {token && (

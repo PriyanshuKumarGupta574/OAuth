@@ -3,12 +3,13 @@ import {
   useContext,
   useEffect,
   useState,
-   type ReactNode,
+  type ReactNode,
 } from "react";
 import API from "../services/api";
 
 type AuthContextType = {
   token: string | null;
+  isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
@@ -21,16 +22,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem("token")
   );
 
-  /* ================= LOGIN ================= */
+  const isAuthenticated = Boolean(token);
+
+ 
+  useEffect(() => {
+    if (token) {
+      API.defaults.headers.common.Authorization = `Bearer ${token}`;
+    } else {
+      delete API.defaults.headers.common.Authorization;
+    }
+  }, [token]);
+
+
   const login = (accessToken: string) => {
     localStorage.setItem("token", accessToken);
     setToken(accessToken);
   };
 
-  /* ================= LOGOUT ================= */
+
   const logout = async () => {
     try {
-      await API.post("/auth/logout"); // clears refresh cookie
+      await API.post("/auth/logout"); 
     } catch (err) {
       console.error("Logout error", err);
     } finally {
@@ -39,28 +51,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /* ================= REFRESH TOKEN ================= */
+ 
   const refreshToken = async () => {
     try {
       const res = await API.post("/auth/refresh-token");
-      localStorage.setItem("token", res.data.accessToken);
-      setToken(res.data.accessToken);
-    } catch (err) {
-      console.warn("Refresh token failed");
-      logout();
+      
+      const newToken = res.data.accessToken;
+
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
+    } catch {
+      await logout();
     }
   };
 
-  /* ================= AUTO REFRESH ON LOAD ================= */
+ 
   useEffect(() => {
-    if (!token) {
-      refreshToken();
-    }
+ 
+    if (token) return;
+
+  
+    refreshToken();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ token, login, logout, refreshToken }}
+      value={{
+        token,
+        isAuthenticated,
+        login,
+        logout,
+        refreshToken,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -72,3 +94,6 @@ export const useAuth = () => {
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
   return ctx;
 };
+
+
+

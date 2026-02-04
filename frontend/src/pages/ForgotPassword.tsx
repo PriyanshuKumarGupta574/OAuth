@@ -8,6 +8,7 @@ import {
 import { useForm } from "react-hook-form";
 import AuthLayout from "../layout/AuthLayout";
 import { forgotPassword } from "../services/auth.service";
+import { toast } from "react-toastify";
 
 type ForgotForm = {
   email: string;
@@ -19,15 +20,18 @@ export default function ForgotPassword() {
   const onSubmit = async (data: ForgotForm) => {
     try {
       await forgotPassword(data.email);
-      alert("Password reset link sent to your email");
+     toast.success("Password reset link sent to your email");
     } catch {
-      alert("Something went wrong");
+     toast.error("Something went wrong");
     }
   };
 
   return (
     <AuthLayout>
-      <Card sx={{ width: 420, p: 4, borderRadius: "16px" }}>
+      <Card sx={{ width: 420, p: 4, borderRadius: "16px",
+         background: "linear-gradient(135deg, #ffffff 0%, #92a1b6 100%)",
+         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
+       }}>
         <Typography variant="h5" mb={2}>
           Forgot Password
         </Typography>

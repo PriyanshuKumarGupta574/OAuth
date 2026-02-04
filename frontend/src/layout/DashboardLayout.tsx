@@ -6,7 +6,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <Box sx={{ flex: 1, p: 4 }}>{children}</Box>
+      <Box
+  sx={{
+    flex: 1,
+    px: { xs: 2, md: 4 },
+    py: 3,
+    maxWidth: "1200px",
+    mx: "auto",
+    width: "100%",
+  }}
+>
+  {children}
+</Box>
       <Footer />
     </Box>
   );

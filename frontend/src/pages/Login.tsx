@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { loginUser } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 type LoginForm = {
   email: string;
@@ -40,7 +41,7 @@ export default function Login({
       navigate("/dashboard", { replace: true });
     } catch (error: any) {
       console.error("Login error:", error.response?.data || error);
-      alert(error.response?.data?.message || "Invalid credentials");
+      toast.error(error.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -50,7 +51,10 @@ export default function Login({
   };
 
   return (
-    <Card sx={{ width: 420, p: 4, borderRadius: "16px" }}>
+    <Card sx={{ width: 420, p: 4, borderRadius: "16px",
+    background: "linear-gradient(135deg, #ffffff 0%, #92a1b6 100%)",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
+     }}>
       <Typography variant="h5" mb={2}>
         Login
       </Typography>
@@ -94,7 +98,7 @@ export default function Login({
           <Button
             variant="outlined"
             fullWidth
-            sx={{ borderRadius: "12px" }}
+            sx={{ borderRadius: "12px", color: "blue" }}
             onClick={handleGoogleLogin}
           >
             Login with Google

@@ -9,7 +9,10 @@ import {
   resendOtp,
   forgotPassword,
   resetPassword,
+  logout,
+  refreshToken,
 } from "../controller/auth.controller";
+import { generateAccessToken, generateRefreshToken } from "../../common/services/jwt.service";
 
 const router = Router();
 
@@ -19,30 +22,37 @@ router.post("/resend-otp", resendOtp);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
+router.post("/refresh-token", refreshToken);
+router.post("/logout", logout);
 
 
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
     const user = req.user as any;
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_ACCESS_SECRET!,
-      { expiresIn: "15m" }
-    );
+    const accessToken = generateAccessToken({ id: user._id });
+    const refreshToken = generateRefreshToken({ id: user._id });
+
+    // 🔥 REQUIRED
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+      path: "/",
+    });
 
     res.redirect(
-      `${process.env.CLIENT_URL}/oauth-success?token=${token}`
+      `${process.env.CLIENT_URL}/oauth-success?token=${accessToken}`
     );
   }
 );
+
 
 export default router;
 

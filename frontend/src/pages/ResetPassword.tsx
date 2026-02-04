@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import AuthLayout from "../layout/AuthLayout";
 import { resetPassword } from "../services/auth.service";
+import { toast } from "react-toastify";
 
 type ResetForm = {
   password: string;
@@ -22,16 +23,16 @@ export default function ResetPassword() {
 
   const onSubmit = async (data: ResetForm) => {
     if (data.password !== data.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     try {
       await resetPassword(token!, data.password);
-      alert("Password reset successful");
+      toast.success("Password reset successful");
       navigate("/");
     } catch {
-      alert("Invalid or expired link");
+      toast.error("Invalid or expired link");
     }
   };
 

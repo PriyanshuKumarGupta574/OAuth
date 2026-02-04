@@ -30,16 +30,16 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Auth */}
+        
           <Route path="/" element={<AuthPage />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} /> {/* ✅ */}
 
-          {/* Password */}
+       
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {/* Protected */}
+          
           <Route
             path="/dashboard"
             element={

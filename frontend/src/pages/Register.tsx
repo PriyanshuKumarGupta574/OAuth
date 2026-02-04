@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import GoogleIcon from "@mui/icons-material/Google";
 import { registerUser } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type RegisterForm = {
   name: string;
@@ -35,12 +36,12 @@ export default function Register({
 
   const onSubmit = async (data: RegisterForm) => {
     if (data.password !== data.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (!data.acceptTerms) {
-      alert("Please accept Terms & Conditions");
+      toast.warn("Please accept Terms & Conditions");
       return;
     }
 
@@ -55,7 +56,7 @@ export default function Register({
         state: { email: data.email },
       });
     } catch (err: any) {
-      alert(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -66,9 +67,15 @@ export default function Register({
   return (
     <Card
       sx={{
-        width: 420,
-        p: 3,
-        borderRadius: "16px",
+        // width: 420,
+        // p: 3,
+        // borderRadius: "16px",
+     width: 420,
+    //  height: 500,
+    p: 4,
+    borderRadius: 3,
+    background: "linear-gradient(135deg, #ffffff 0%, #92a1b6 100%)",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
       }}
     >
       <Typography variant="h6" mb={1.5}>
@@ -150,7 +157,7 @@ export default function Register({
             variant="outlined"
             startIcon={<GoogleIcon />}
             onClick={handleGoogleRegister}
-            sx={{ borderRadius: "12px", textTransform: "none" }}
+            sx={{ borderRadius: "12px", textTransform: "none", color: "blue" }}
           >
             Register with Google
           </Button>
