@@ -5,7 +5,9 @@
     "rootDir": ".",
     "outDir": "dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types", "./app/types"]
+
   }
 }
 

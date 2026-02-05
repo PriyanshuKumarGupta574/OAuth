@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <AppBar position="static">
       <Toolbar sx={{ display: "flex", justifyContent: "space-between",  }}>
-        <Typography variant="h6">Auth System</Typography>
+        <Typography variant="h6">Collaborative Code Snippet Manager</Typography>
 
         {token && (
           <Button color="inherit" onClick={handleLogout}>

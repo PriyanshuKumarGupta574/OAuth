@@ -1,0 +1,224 @@
+import { Request, Response } from "express";
+import {
+  createSnippetService,
+  getAllSnippetsService,
+  getSnippetByIdService,
+  updateSnippetService,
+  deleteSnippetService,
+  forkSnippetService,
+  getSnippetsByFolderService,
+} from "../services/snippet.service";
+
+import Snippet from "../schema/snippet.schema";
+import SnippetVersion, {  ISnippetVersion }  from "../schema/snippetVersion.schema";
+
+
+
+
+
+export const createSnippet = async (req: Request, res: Response) => {
+  try {
+    const snippet = await createSnippetService({
+      ...req.body,
+      author: (req as any).user._id,
+    });
+
+    res.status(201).json(snippet);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create snippet" });
+  }
+};
+
+
+
+
+
+// export const getAllSnippets = async (req: Request, res: Response) => {
+//   try {
+//     const userId = (req as any).user?._id;
+//     const { tag, language } = req.query;
+
+//     const snippets = await getAllSnippetsService(
+//       userId,
+//       tag as string,
+//       language as string
+//     );
+
+//     res.json(snippets);
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to fetch snippets" });
+//   }
+// };
+
+export const getAllSnippets = async (req: Request, res: Response) => {
+  try {
+    const { tag, language, page = 1, limit = 6 } = req.query;
+
+    const data = await getAllSnippetsService(
+      (req as any).user?._id,
+      tag as string,
+      language as string,
+      Number(page),
+      Number(limit)
+    );
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch snippets" });
+  }
+};
+
+
+
+
+
+
+
+
+export const getSnippetById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+
+    const snippet = await getSnippetByIdService(
+      id,
+      (req as any).user?._id
+    );
+
+    res.json(snippet);
+  } catch (error: any) {
+    res.status(403).json({ message: error.message });
+  }
+};
+
+
+
+
+export const getPublicSnippet = async (req: Request, res: Response) => {
+  const snippet = await Snippet.findById(req.params.id);
+
+  if (!snippet) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  if (snippet.visibility !== "public") {
+    return res.status(403).json({ message: "Private snippet" });
+  }
+
+  res.json(snippet);
+};
+
+
+
+
+export const updateSnippet = async (req: Request, res: Response) => {
+  try {
+    const snippet = await updateSnippetService(
+      req.params.id as string,
+      (req as any).user._id,
+      req.body
+    );
+    res.json(snippet);
+  } catch (error: any) {
+    res.status(403).json({ message: error.message });
+  }
+};
+
+
+
+
+
+
+
+
+export const restoreSnippetVersion = async (req: Request, res: Response) => {
+  try {
+    const { versionId } = req.params;
+
+    const version = await SnippetVersion.findById(versionId) as ISnippetVersion;
+
+    if (!version)
+      return res.status(404).json({ message: "Version not found" });
+
+    const updated = await Snippet.findByIdAndUpdate(
+      version.snippet,
+      {
+        title: version.title,
+        code: version.code,
+        language: version.language,
+        tags: version.tags,
+        visibility: version.visibility,
+      },
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: "Restore failed" });
+  }
+};
+
+
+export const getSnippetHistory = async (req: Request, res: Response) => {
+  const history = await SnippetVersion.find({
+    snippet: req.params.id ,
+  }).sort({ editedAt: -1 });
+
+  res.json(history);
+};
+
+export const getSnippetsByFolder = async (req: Request, res: Response) => {
+  try {
+    const snippets = await getSnippetsByFolderService(
+      req.params.folderId as string,
+      (req as any).user._id
+    );
+
+    res.json(snippets);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch folder snippets" });
+  }
+};
+
+
+export const moveSnippetToFolder = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { folderId } = req.body;
+
+  const snippet = await Snippet.findByIdAndUpdate(
+    id,
+    { folder: folderId },
+    { new: true }
+  );
+
+  res.json(snippet);
+};
+
+
+export const forkSnippet = async (req: Request, res: Response) => {
+  try {
+    const forked = await forkSnippetService(
+      req.params.id as string,
+      (req as any).user._id
+    );
+
+    res.status(201).json(forked);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+export const deleteSnippet = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?._id;
+
+    await deleteSnippetService(req.params.id as string, userId);
+
+    res.json({ message: "Snippet deleted" });
+  } catch (error) {
+    res.status(403).json({ message: "Not allowed to delete this snippet" });
+  }
+};
+
+

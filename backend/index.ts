@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 
 import "./app/auth/config/passport";
 import routes from "./app/route";
+import folderRoutes from "./app/snippet/route/folder.routes";
+
 
 const app = express();
 
@@ -37,6 +39,9 @@ app.use(passport.initialize());
    ROUTES
 ====================================================== */
 app.use("/api", routes);
+
+
+app.use("/api/folders", folderRoutes);
 
 /* ======================================================
    DATABASE + SERVER
