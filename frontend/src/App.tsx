@@ -49,7 +49,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {/* Dashboard */}
+         
           <Route
             path="/dashboard"
             element={
@@ -59,7 +59,6 @@ export default function App() {
             }
           />
 
-          {/* 🔥 Snippet routes MUST be inside Routes */}
           <Route
             path="/dashboard/snippets"
             element={
@@ -86,7 +85,7 @@ export default function App() {
           </ProtectedRoute>
           }
           />
-          {/* <Route path="/dashboard/snippets/edit/:id" element={<EditSnippet />} /> */}
+         
           <Route
   path="/dashboard/snippets/edit/:id"
   element={
@@ -135,35 +134,3 @@ export default function App() {
 
 
 
-// export default function App() {
-//   return (
-//     <AuthProvider>
-//       <BrowserRouter>
-//         <Routes>
-        
-//           <Route path="/" element={<AuthPage />} />
-//           <Route path="/verify-otp" element={<VerifyOtp />} />
-//           <Route path="/oauth-success" element={<OAuthSuccess />} />
-
-       
-//           <Route path="/forgot-password" element={<ForgotPassword />} />
-//           <Route path="/reset-password/:token" element={<ResetPassword />} />
-
-          
-//           <Route
-//             path="/dashboard"
-//             element={
-//               <ProtectedRoute>
-//                 <Dashboard />
-//               </ProtectedRoute>
-//             }
-//           />
-//         </Routes>
-
-//         <Route path="/dashboard/snippets" element={<SnippetList />} />
-//         <Route path="/dashboard/snippets/create" element={<CreateSnippet />} />
-
-//       </BrowserRouter>
-//     </AuthProvider>
-//   );
-// }

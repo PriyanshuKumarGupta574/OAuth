@@ -4,6 +4,7 @@ import { Box, Card, Typography } from "@mui/material";
 import Editor from "@monaco-editor/react";
 import { getPublicSnippet } from "../services/snippet.service";
 
+
 type Snippet = {
   _id: string;
   title: string;

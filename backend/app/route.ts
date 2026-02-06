@@ -11,11 +11,15 @@ import {
 } from "./common/services/jwt.service";
 import snippetRoutes from "./snippet/route/snippet.route";
 
+
+
 const router = Router();
 
 
 router.use("/auth", authRoutes);
 router.use("/snippets", snippetRoutes);
+router.use("/api/snippet", snippetRoutes);
+
 
 
 
@@ -62,6 +66,8 @@ router.get(
     );
   }
 );
+
+
 
 export default router;
 

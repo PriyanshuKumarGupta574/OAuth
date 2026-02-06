@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function CreateFolder() {
   const [name, setName] = useState("");
-  const navigate = useNavigate();   // ✅ MISSING LINE
+  const navigate = useNavigate();   
 
   const handleCreate = async () => {
     try {
@@ -14,7 +14,7 @@ export default function CreateFolder() {
 
       await createFolder({ name });
 
-      navigate("/dashboard/snippets");   // redirect after create
+      navigate("/dashboard/snippets");   
     } catch (err) {
       console.error(err);
       alert("Failed to create folder");
@@ -47,44 +47,3 @@ export default function CreateFolder() {
 }
 
 
-// import { useState } from "react";
-// import { Box, Card, Typography, TextField, Button } from "@mui/material";
-// import DashboardLayout from "../layout/DashboardLayout";
-// import { createFolder } from "../services/folder.service";
-// import { useNavigate } from "react-router-dom";
-
-// export default function CreateFolder() {
-//   const [name, setName] = useState("");
-//   const navigate = useNavigate();
-
-//   const handleCreate = async () => {
-//     if (!name) return alert("Folder name required");
-
-//     await createFolder({  name });
-//     navigate("/dashboard/snippets");
-//   };
-
-//   return (
-//     <DashboardLayout>
-//       <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
-//         <Card sx={{ p: 4 }}>
-//           <Typography variant="h5" mb={3}>
-//             Create Folder 📁
-//           </Typography>
-
-//           <TextField
-//             label="Folder Name"
-//             fullWidth
-//             value={name}
-//             onChange={(e) => setName(e.target.value)}
-//             sx={{ mb: 3 }}
-//           />
-
-//           <Button variant="contained" onClick={handleCreate}>
-//             Create Folder
-//           </Button>
-//         </Card>
-//       </Box>
-//     </DashboardLayout>
-//   );
-// }

@@ -16,16 +16,6 @@ const folderSchema = new Schema<IFolder>(
 export default mongoose.model<IFolder>("Folder", folderSchema);
 
 
-// import mongoose, { Schema } from "mongoose";
 
-// const folderSchema = new Schema({
-//   name: String,
-//   user: {
-//     type: Schema.Types.ObjectId,
-//     ref: "User",
-//   },
-// });
-
-// export default mongoose.model("Folder", folderSchema);
 
 

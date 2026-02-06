@@ -5,15 +5,6 @@ export const createSnippet = (data: any) =>
 
 
 
-// export const getSnippets = (tag?: string, language?: string) => {
-//   return api.get("/snippets", {
-//     params: {
-//       tag,
-//       language,
-//     },
-//   });
-// };
-
 export const getSnippets = (
   tag?: string,
   language?: string,
@@ -61,19 +52,3 @@ export const deleteSnippet = (id: string) => {
 };
 
 
-
-
-// import api from "./api";
-
-// export const createSnippet = (data: any) =>
-//   api.post("/snippets", data);
-
-// export const getSnippets = () =>
-//   api.get("/snippets");
-
-// export const getSnippet = (id: string) =>
-//   api.get(`/snippets/${id}`);
-
-// export const getSnippetById = (id: string) => {
-//   return api.get(`/snippets/${id}`);
-// };

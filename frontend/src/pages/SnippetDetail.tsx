@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Card, Typography, Button } from "@mui/material";
-import Editor from "@monaco-editor/react";
+//import Editor from "@monaco-editor/react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getSnippetById } from "../services/snippet.service";
 import { forkSnippet } from "../services/snippet.service";
 import { deleteSnippet } from "../services/snippet.service";
+import CodeViewer from "../components/CodeViewer";
+import CommentSection from "../components/CommentSection";
+
 
 
 
@@ -75,19 +78,11 @@ const handleDelete = async () => {
             Language: {snippet.language}
           </Typography>
 
-          <Editor
-            height="500px"
-            language={snippet.language}
-            value={snippet.code}
-            theme="vs-dark"
-            options={{
-              readOnly: true,
-              minimap: { enabled: false },
-              fontSize: 14,
-            }}
-          />
+         
 
-          {/* ACTION BUTTONS */}
+          <CodeViewer code={snippet.code} language={snippet.language} />
+
+        
           <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
             <Button variant="contained" onClick={copyCode}>
               Copy Code
@@ -124,6 +119,8 @@ const handleDelete = async () => {
             </Button>
           </Box>
         </Card>
+        <CommentSection snippetId={snippet._id} />
+
       </Box>
     </DashboardLayout>
   );

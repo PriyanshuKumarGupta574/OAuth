@@ -26,7 +26,6 @@ type Folder = {
   name: string;
 };
 
-
 export default function CreateSnippet() {
   const [title, setTitle] = useState("");
   const [language, setLanguage] = useState("javascript");
@@ -36,15 +35,13 @@ export default function CreateSnippet() {
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  const [folder, setFolder] = useState("");
-const [folders, setFolders] = useState<Folder[]>([]);
+  const [folderId, setFolderId] = useState("");
+  const [folders, setFolders] = useState<Folder[]>([]);
 
-
+  
   useEffect(() => {
-  getFolders().then(res => setFolders(res.data));
-}, []);
-
-
+    getFolders().then((res) => setFolders(res.data));
+  }, []);
 
   const addTag = () => {
     if (tagInput && !tags.includes(tagInput)) {
@@ -54,6 +51,11 @@ const [folders, setFolders] = useState<Folder[]>([]);
   };
 
   const handleSubmit = async () => {
+    if (!title.trim()) {
+      alert("Title is required");
+      return;
+    }
+
     try {
       await createSnippet({
         title,
@@ -61,36 +63,35 @@ const [folders, setFolders] = useState<Folder[]>([]);
         code,
         tags,
         visibility,
-        
-        folder: folder || null,
+        folder: folderId || null, 
       });
 
+      
       setTitle("");
       setLanguage("javascript");
       setCode("// Start typing your code...");
       setTags([]);
       setVisibility("private");
+      setFolderId("");
     } catch (error) {
       console.error("Failed to create snippet", error);
     }
   };
 
+  const formatCode = async () => {
+    try {
+      const formatted = await prettier.format(code, {
+        parser: "babel",
+        plugins: [parserBabel],
+        semi: true,
+        singleQuote: true,
+      });
 
-const formatCode = async () => {
-  try {
-    const formatted = await prettier.format(code, {
-      parser: "babel",
-      plugins: [parserBabel],
-      semi: true,
-      singleQuote: true,
-    });
-
-    setCode(formatted);
-  } catch (err) {
-    console.error("Formatting error", err);
-  }
-};
-
+      setCode(formatted);
+    } catch (err) {
+      console.error("Formatting error", err);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -100,7 +101,7 @@ const formatCode = async () => {
         </Typography>
 
         <Card sx={snippetCard}>
-          {/* Title */}
+     
           <TextField
             label="Snippet Title"
             fullWidth
@@ -109,7 +110,7 @@ const formatCode = async () => {
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          {/* Language */}
+        
           <TextField
             select
             label="Language"
@@ -135,7 +136,7 @@ const formatCode = async () => {
             ))}
           </TextField>
 
-          {/* Visibility (RESTORED ✅) */}
+          
           <TextField
             select
             label="Visibility"
@@ -150,26 +151,24 @@ const formatCode = async () => {
             <MenuItem value="public">Public</MenuItem>
           </TextField>
 
+          <TextField
+            select
+            label="Assign Folder"
+            fullWidth
+            sx={{ mb: 3 }}
+            value={folderId}
+            onChange={(e) => setFolderId(e.target.value)}
+          >
+            <MenuItem value="">No Folder</MenuItem>
 
-          {/* Folder Select */}
-<TextField
-  select
-  label="Folder"
-  fullWidth
-  sx={{ mb: 3 }}
-  value={folder}
-  onChange={(e) => setFolder(e.target.value)}
->
-  <MenuItem value="">No Folder</MenuItem>
-  {folders.map((f) => (
-    <MenuItem key={f._id} value={f._id}>
-      {f.name}
-    </MenuItem>
-  ))}
-</TextField>
+            {folders.map((f) => (
+              <MenuItem key={f._id} value={f._id}>
+                📁 {f.name}
+              </MenuItem>
+            ))}
+          </TextField>
 
-
-          {/* Tags */}
+       
           <TextField
             label="Add Tag"
             fullWidth
@@ -184,14 +183,12 @@ const formatCode = async () => {
               <Chip
                 key={tag}
                 label={tag}
-                onDelete={() =>
-                  setTags(tags.filter((t) => t !== tag))
-                }
+                onDelete={() => setTags(tags.filter((t) => t !== tag))}
               />
             ))}
           </Stack>
 
-          {/* Monaco Editor */}
+         
           <Box sx={{ mb: 3 }}>
             <Editor
               height="400px"
@@ -207,16 +204,12 @@ const formatCode = async () => {
               }}
             />
           </Box>
-          
-          <Button
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={formatCode}
-          >
-          Auto Format   
+
+          <Button variant="outlined" sx={{ mt: 2 }} onClick={formatCode}>
+            Auto Format
           </Button>
 
-          {/* Save */}
+      
           <Button
             variant="contained"
             size="large"
@@ -230,10 +223,6 @@ const formatCode = async () => {
     </DashboardLayout>
   );
 }
-
-
-
-
 
 
 

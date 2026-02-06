@@ -17,7 +17,6 @@ const snippetSchema = new Schema<ISnippet>(
     title: { type: String, required: true },
     code: { type: String, required: true },
     language: { type: String, required: true },
-    // tags: [{ type: String }],
     tags: {
     type: [String],
     index: true,
@@ -37,6 +36,7 @@ const snippetSchema = new Schema<ISnippet>(
       folder: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
+      default: null,
     },
     
   },

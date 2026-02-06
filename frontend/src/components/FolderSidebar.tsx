@@ -23,7 +23,7 @@ type Folder = {
   name: string;
 };
 
-/* ---------------- DROPPABLE FOLDER ITEM ---------------- */
+
 function DroppableFolder({
   folder,
   onDelete,
@@ -56,7 +56,7 @@ function DroppableFolder({
   );
 }
 
-/* ---------------- MAIN SIDEBAR ---------------- */
+
 export default function FolderSidebar() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const navigate = useNavigate();
@@ -108,61 +108,6 @@ export default function FolderSidebar() {
   );
 }
 
-
-
-// import { useEffect, useState } from "react";
-// import { Box, Typography, List, ListItemButton, ListItemText, Button } from "@mui/material";
-// import { getFolders } from "../services/folder.service";
-// import { useNavigate } from "react-router-dom";
-
-// type Folder = {
-//   _id: string;
-//   name: string;
-// };
-
-// export default function FolderSidebar() {
-//   const [folders, setFolders] = useState<Folder[]>([]);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     getFolders().then((res) => setFolders(res.data));
-//   }, []);
-
-//   return (
-//     <Box
-//       sx={{
-//         width: 250,
-//         borderRight: "1px solid #eee",
-//         p: 2,
-//         bgcolor: "#fafafa",
-//       }}
-//     >
-//       <Typography variant="h6" mb={2}>
-//         📁 Folders
-//       </Typography>
-
-//       <Button
-//         variant="contained"
-//         fullWidth
-//         sx={{ mb: 2 }}
-//         onClick={() => navigate("/dashboard/folders/create")}
-//       >
-//         + New Folder
-//       </Button>
-
-//       <List>
-//         {folders.map((f) => (
-//           <ListItemButton
-//             key={f._id}
-//             onClick={() => navigate(`/dashboard/folder/${f._id}`)}
-//           >
-//             <ListItemText primary={f.name} />
-//           </ListItemButton>
-//         ))}
-//       </List>
-//     </Box>
-//   );
-// }
 
 
 

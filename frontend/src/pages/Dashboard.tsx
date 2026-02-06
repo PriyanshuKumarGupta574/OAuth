@@ -13,7 +13,7 @@ export default function Dashboard() {
           You have successfully logged in.
         </Typography>
 
-        {/* Snippet Feature Buttons */}
+        
         <Stack direction="row" spacing={2} mt={4}>
           <Button
             variant="contained"
@@ -35,18 +35,4 @@ export default function Dashboard() {
 }
 
 
-// import { Card, Typography } from "@mui/material";
-// import DashboardLayout from "../layout/DashboardLayout";
 
-// export default function Dashboard() {
-//   return (
-//     <DashboardLayout>
-//       <Card sx={{ p: 4, borderRadius: "16px" }}>
-//         <Typography variant="h4">Welcome to Dashboard 🎉</Typography>
-//         <Typography mt={2}>
-//           You have successfully logged in.
-//         </Typography>
-//       </Card>
-//     </DashboardLayout>
-//   );
-// }

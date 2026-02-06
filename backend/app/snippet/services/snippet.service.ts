@@ -1,11 +1,10 @@
 import Snippet, { ISnippet } from "../schema/snippet.schema";
 import SnippetVersion from "../schema/snippetVersion.schema";
 
+
 export const createSnippetService = async (data: any) => {
   return await Snippet.create(data);
 };
-
-
 
 
 export const getAllSnippetsService = async (
@@ -19,10 +18,12 @@ export const getAllSnippetsService = async (
     $or: [{ visibility: "public" }, { author: userId }],
   };
 
+
   if (tag) {
     query.tags = { $in: [tag] };
   }
 
+  
   if (language) {
     query.language = language;
   }
@@ -44,8 +45,6 @@ export const getAllSnippetsService = async (
     pages: Math.ceil(total / limit),
   };
 };
-
-
 
 
 export const getSnippetByIdService = async (
@@ -73,48 +72,46 @@ export const getSnippetByIdService = async (
 };
 
 
-
-
 export const updateSnippetService = async (
   id: string,
   userId: string,
   data: any
 ) => {
-//   const snippet = await Snippet.findById(id);
-const snippet = await Snippet.findById(id) as ISnippet;
-
+  const snippet = (await Snippet.findById(id)) as ISnippet;
 
   if (!snippet) throw new Error("Snippet not found");
+
   if (snippet.author.toString() !== userId)
     throw new Error("Unauthorized");
 
-  // 🔥 SAVE OLD VERSION BEFORE UPDATE
- await SnippetVersion.create({
-  snippet: snippet._id,
-  title: snippet.title,
-  code: snippet.code,
-  language: snippet.language,
-  tags: snippet.tags,
-  visibility: snippet.visibility,
-  editedAt: new Date(),
-});
+ 
+  await SnippetVersion.create({
+    snippet: snippet._id,
+    title: snippet.title,
+    code: snippet.code,
+    language: snippet.language,
+    tags: snippet.tags,
+    visibility: snippet.visibility,
+    editedAt: new Date(),
+  });
 
-
-  // update snippet
   return await Snippet.findByIdAndUpdate(id, data, { new: true });
 };
 
-export const getSnippetsByFolderService = async (folderId: string, userId: string) => {
+
+export const getSnippetsByFolderService = async (
+  folderId: string,
+  userId: string
+) => {
   return await Snippet.find({
     folder: folderId,
-    $or: [{ visibility: "public" }, { author: userId }]
-  }).sort({ createdAt: -1 });
+    $or: [{ visibility: "public" }, { author: userId }],
+  })
+    .populate("author", "name email")
+    .sort({ createdAt: -1 });
 };
 
 
-
-
-//fork snippet
 export const forkSnippetService = async (
   snippetId: string,
   userId: string
@@ -123,7 +120,7 @@ export const forkSnippetService = async (
 
   if (!original) throw new Error("Snippet not found");
 
-  // prevent multiple "(fork)"
+
   const forkTitle = original.title.includes("(fork)")
     ? original.title
     : `${original.title} (fork)`;
@@ -137,8 +134,6 @@ export const forkSnippetService = async (
     author: userId,
   });
 };
-
-
 
 
 export const deleteSnippetService = async (
@@ -165,22 +160,8 @@ export const deleteSnippetService = async (
 
 
 
-// import Snippet from "../schema/snippet.schema";
-
-// export const createSnippetService = async (data: any) => {
-//   return await Snippet.create(data);
-// };
-
-// export const getAllSnippetsService = async () => {
-//   return await Snippet.find().populate("author", "name email");
-// };
-
-// export const getSnippetByIdService = async (id: string) => {
-//   return await Snippet.findById(id);
-// };
 
 
 
-// export const deleteSnippetService = async (id: string) => {
-//   return await Snippet.findByIdAndDelete(id);
-// };
+
+
