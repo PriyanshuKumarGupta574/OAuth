@@ -16,6 +16,8 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/nodemailer": "^7.0.9",
+    "@types/passport-github2": "^1.2.9",
+    "axios": "^1.13.4",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -25,6 +27,7 @@
     "mongoose": "^9.1.5",
     "nodemailer": "^7.0.13",
     "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {

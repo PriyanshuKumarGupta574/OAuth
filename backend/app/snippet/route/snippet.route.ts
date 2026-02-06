@@ -16,6 +16,11 @@ import {
 import { authMiddleware } from "../../common/middleware/auth.middleware";
 import folderRoutes from "./folder.routes";
 import { createComment, getCommentsBySnippet } from "../controller/comment.controller";
+import {
+  trackView,
+  getTrendingSnippets,
+  getUserAnalytics,
+} from "../controller/analytics.controller";
 
 const router = Router();
 
@@ -43,6 +48,11 @@ router.delete("/:id", authMiddleware, deleteSnippet);
 /* ================= COMMENT ROUTES ================= */
 router.post("/:id/comments", authMiddleware, createComment);
 router.get("/:id/comments", authMiddleware, getCommentsBySnippet);
+
+/* ================= ANALYTICS ROUTES ================= */
+router.post("/:id/view", trackView); // Public endpoint for tracking views
+router.get("/trending/list", getTrendingSnippets); // Public endpoint
+router.get("/analytics/user", authMiddleware, getUserAnalytics);
 
 export default router;
 

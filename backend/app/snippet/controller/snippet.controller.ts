@@ -10,7 +10,8 @@ import {
 } from "../services/snippet.service";
 
 import Snippet from "../schema/snippet.schema";
-import SnippetVersion, {  ISnippetVersion }  from "../schema/snippetVersion.schema";
+import SnippetVersion, { ISnippetVersion } from "../schema/snippetVersion.schema";
+import { incrementForkCountService } from "../services/analytics.service";
 
 
 
@@ -52,12 +53,26 @@ export const createSnippet = async (req: Request, res: Response) => {
 
 export const getAllSnippets = async (req: Request, res: Response) => {
   try {
-    const { tag, language, page = 1, limit = 6 } = req.query;
+    const {
+      tag,
+      language,
+      author,
+      startDate,
+      endDate,
+      search,
+      page = 1,
+      limit = 6
+    } = req.query;
 
     const data = await getAllSnippetsService(
       (req as any).user?._id,
       tag as string,
       language as string,
+      author as string,
+      startDate as string,
+      endDate as string,
+      search as string,
+      (req.query.teamId as string), // Pass teamId
       Number(page),
       Number(limit)
     );
@@ -160,7 +175,7 @@ export const restoreSnippetVersion = async (req: Request, res: Response) => {
 
 export const getSnippetHistory = async (req: Request, res: Response) => {
   const history = await SnippetVersion.find({
-    snippet: req.params.id ,
+    snippet: req.params.id,
   }).sort({ editedAt: -1 });
 
   res.json(history);
@@ -196,10 +211,15 @@ export const moveSnippetToFolder = async (req: Request, res: Response) => {
 
 export const forkSnippet = async (req: Request, res: Response) => {
   try {
+    const originalSnippetId = req.params.id as string;
+
     const forked = await forkSnippetService(
-      req.params.id as string,
+      originalSnippetId,
       (req as any).user._id
     );
+
+    // Increment fork count on original snippet
+    await incrementForkCountService(originalSnippetId);
 
     res.status(201).json(forked);
   } catch (error: any) {

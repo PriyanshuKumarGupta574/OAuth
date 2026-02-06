@@ -5,9 +5,15 @@ export interface ISnippet extends Document {
   code: string;
   language: string;
   tags: string[];
-  visibility: "public" | "private";
+  visibility: "public" | "private" | "team";
   author: mongoose.Types.ObjectId;
-  folder?: mongoose.Types.ObjectId
+  team?: mongoose.Types.ObjectId;
+  folder?: mongoose.Types.ObjectId;
+  views: number;
+  forks: number;
+  commentCount: number;
+  lastViewedAt?: Date;
+  trendingScore: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,14 +24,14 @@ const snippetSchema = new Schema<ISnippet>(
     code: { type: String, required: true },
     language: { type: String, required: true },
     tags: {
-    type: [String],
-    index: true,
-    default: [],
+      type: [String],
+      index: true,
+      default: [],
     },
 
     visibility: {
       type: String,
-      enum: ["public", "private"],
+      enum: ["public", "private", "team"],
       default: "private",
     },
     author: {
@@ -33,12 +39,34 @@ const snippetSchema = new Schema<ISnippet>(
       ref: "User",
       required: true,
     },
-      folder: {
+    team: {
+      type: Schema.Types.ObjectId,
+      ref: "Team",
+    },
+    folder: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
       default: null,
     },
-    
+    views: {
+      type: Number,
+      default: 0,
+    },
+    forks: {
+      type: Number,
+      default: 0,
+    },
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
+    lastViewedAt: {
+      type: Date,
+    },
+    trendingScore: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

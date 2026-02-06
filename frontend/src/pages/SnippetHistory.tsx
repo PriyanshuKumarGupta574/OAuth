@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Card, Typography, Button } from "@mui/material";
+import { Box, Card, Typography, Button, Stack } from "@mui/material";
+import { toast } from "react-toastify";
+import HistoryIcon from "@mui/icons-material/History";
+import RestoreIcon from "@mui/icons-material/Restore";
 import DashboardLayout from "../layout/DashboardLayout";
 import {
   getSnippetHistory,
@@ -10,7 +13,7 @@ import {
 type Version = {
   _id: string;
   code: string;
-  editedAt: string; 
+  editedAt: string;
 };
 
 export default function SnippetHistory() {
@@ -26,36 +29,51 @@ export default function SnippetHistory() {
   const restore = async (versionId: string) => {
     try {
       await restoreSnippetVersion(versionId);
-      alert("Version restored");
+      toast.success("Version restored successfully!");
     } catch (err) {
       console.error(err);
-      alert("Restore failed");
+      toast.error("Restore failed");
     }
   };
 
   return (
     <DashboardLayout>
       <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-        <Typography variant="h4" mb={3}>
-          Version History
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+          <HistoryIcon color="primary" sx={{ fontSize: 32 }} />
+          <Typography variant="h4" fontWeight={700}>
+            Version History
+          </Typography>
+        </Box>
 
-        {history.map((v) => (
-          <Card key={v._id} sx={{ p: 3, mb: 2 }}>
-           
-            <Typography variant="caption">
-              {new Date(v.editedAt).toLocaleString()}
-            </Typography>
-
-            <Button
-              variant="outlined"
-              sx={{ mt: 1 }}
-              onClick={() => restore(v._id)}
-            >
-              Restore Version
-            </Button>
-          </Card>
-        ))}
+        {history.length === 0 ? (
+          <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>
+            No history found for this snippet.
+          </Typography>
+        ) : (
+          history.map((v) => (
+            <Card key={v._id} sx={{ p: 3, mb: 2, borderRadius: 3, boxShadow: 'none', border: '1px solid #e2e8f0' }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    Code Revision
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {new Date(v.editedAt).toLocaleString()}
+                  </Typography>
+                </Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<RestoreIcon />}
+                  size="small"
+                  onClick={() => restore(v._id)}
+                >
+                  Restore
+                </Button>
+              </Stack>
+            </Card>
+          ))
+        )}
       </Box>
     </DashboardLayout>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   Box,
   Card,
@@ -6,7 +7,12 @@ import {
   Typography,
   Button,
   MenuItem,
+  Stack,
+  Divider,
 } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import EditIcon from "@mui/icons-material/Edit";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -27,7 +33,7 @@ export default function EditSnippet() {
   const [title, setTitle] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
-  const [visibility, setVisibility] = useState<"public" | "private">("private");
+  const [visibility, setVisibility] = useState<"public" | "private" | "team">("private");
 
   useEffect(() => {
     if (id) {
@@ -51,29 +57,34 @@ export default function EditSnippet() {
     navigate("/dashboard/snippets");
   };
 
-  
-const formatCode = async () => {
-  try {
-    const formatted = await prettier.format(code, {
-      parser: "babel",
-      plugins: [parserBabel],
-      semi: true,
-      singleQuote: true,
-    });
 
-    setCode(formatted);
-  } catch (err) {
-    console.error("Formatting error", err);
-  }
-};
+  const formatCode = async () => {
+    try {
+      const formatted = await prettier.format(code, {
+        parser: "babel",
+        plugins: [parserBabel],
+        semi: true,
+        singleQuote: true,
+      });
+
+      setCode(formatted);
+      toast.success("Code formatted!");
+    } catch (err) {
+      console.error("Formatting error", err);
+      toast.error("Formatting failed");
+    }
+  };
 
 
   return (
     <DashboardLayout>
       <Box sx={snippetContainer}>
-        <Typography variant="h4" fontWeight="bold" mb={3}>
-          Edit Snippet ✏️
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+          <EditIcon color="primary" sx={{ fontSize: 32 }} />
+          <Typography variant="h4" fontWeight={700}>
+            Edit Snippet
+          </Typography>
+        </Box>
 
         <Card sx={snippetCard}>
           <TextField
@@ -116,11 +127,12 @@ const formatCode = async () => {
             sx={{ mb: 3 }}
             value={visibility}
             onChange={(e) =>
-              setVisibility(e.target.value as "public" | "private")
+              setVisibility(e.target.value as "public" | "private" | "team")
             }
           >
             <MenuItem value="public">Public</MenuItem>
             <MenuItem value="private">Private</MenuItem>
+            <MenuItem value="team">Team Only</MenuItem>
           </TextField>
 
           <Box sx={{ mb: 3 }}>
@@ -133,19 +145,33 @@ const formatCode = async () => {
             />
           </Box>
 
-          <Button variant="outlined" onClick={formatCode}>
-           Auto Format
-          </Button>
+          <Divider sx={{ my: 3 }} />
 
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="outlined"
+              startIcon={<AutoFixHighIcon />}
+              onClick={formatCode}
+              sx={{ borderRadius: "10px" }}
+            >
+              Auto Format
+            </Button>
 
-          <Button
-            variant="contained"
-            size="large"
-            sx={snippetButton}
-            onClick={handleUpdate}
-          >
-            Update Snippet
-          </Button>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<SaveIcon />}
+              sx={{
+                ...snippetButton,
+                borderRadius: "10px",
+                px: 4,
+                fontWeight: 700
+              }}
+              onClick={handleUpdate}
+            >
+              Update Snippet
+            </Button>
+          </Stack>
         </Card>
       </Box>
     </DashboardLayout>

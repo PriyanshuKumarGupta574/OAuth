@@ -1,7 +1,28 @@
 import api from "./api";
 
-export const getComments = (snippetId: string) =>
-  api.get(`/snippet/${snippetId}/comments`);
+// Comment type for threaded discussions
+export interface Comment {
+  _id: string;
+  snippet: string;
+  author: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  text: string;
+  parentComment?: string;
+  replies?: Comment[];
+  createdAt: string;
+  updatedAt: string;
+}
 
-export const addComment = (snippetId: string, text: string) =>
-  api.post(`/snippet/${snippetId}/comments`, { text });
+export const getComments = (snippetId: string) =>
+  api.get<Comment[]>(`/snippets/${snippetId}/comments`);
+
+export const addComment = (
+  snippetId: string,
+  text: string,
+  parentCommentId?: string
+) =>
+  api.post(`/snippets/${snippetId}/comments`, { text, parentCommentId });
+

@@ -8,7 +8,12 @@ export const createSnippet = (data: any) =>
 export const getSnippets = (
   tag?: string,
   language?: string,
-  page: number = 1
+  page: number = 1,
+  search?: string,
+  author?: string,
+  startDate?: string,
+  endDate?: string,
+  teamId?: string
 ) => {
   return api.get("/snippets", {
     params: {
@@ -16,6 +21,11 @@ export const getSnippets = (
       language,
       page,
       limit: 6,
+      search,
+      author,
+      startDate,
+      endDate,
+      teamId,
     },
   });
 };

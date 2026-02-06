@@ -19,3 +19,7 @@ export const deleteFolder = (id: string) =>
 export const getFolderById = (id: string) =>
   api.get(`/folders/${id}`);
 
+export const getFolderWithSnippets = (folderId: string) =>
+  api.get(`/snippets/folder/${folderId}`);
+
+

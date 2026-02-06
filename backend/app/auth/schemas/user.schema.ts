@@ -12,10 +12,10 @@ const userSchema = new Schema(
 
     password: {
       type: String,
-      select: false, 
+      select: false,
     },
 
-  
+
     isVerified: {
       type: Boolean,
       default: false,
@@ -36,7 +36,7 @@ const userSchema = new Schema(
       select: false,
     },
 
- 
+
     resetPasswordToken: {
       type: String,
       select: false,
@@ -46,18 +46,29 @@ const userSchema = new Schema(
       type: Date,
     },
 
-    
+
     googleId: {
       type: String,
       unique: true,
       sparse: true,
     },
 
-   
+
     authProviders: {
       type: [String],
-      enum: ["local", "google"],
+      enum: ["local", "google", "github"],
       default: ["local"],
+    },
+
+    githubId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    githubAccessToken: {
+      type: String,
+      select: false,
     },
   },
   {

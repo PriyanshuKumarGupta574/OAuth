@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AuthLayout from "./layout/AuthLayout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -9,7 +11,7 @@ import { useState } from "react";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyOtp from "./pages/VerifyOtp";
-import OAuthSuccess from "./pages/OAuthSuccess"; 
+import OAuthSuccess from "./pages/OAuthSuccess";
 import CreateSnippet from "./pages/CreateSnippet";
 import SnippetList from "./pages/SnippetList";
 import SnippetDetail from "./pages/SnippetDetail";
@@ -18,6 +20,13 @@ import PublicSnippet from "./pages/PublicSnippet";
 import SnippetHistory from "./pages/SnippetHistory";
 import CreateFolder from "./pages/CreateFolder";
 import FolderDetail from "./pages/FolderDetail";
+import TrendingSnippets from "./pages/TrendingSnippets";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import CreateTeam from "./pages/CreateTeam";
+import TeamList from "./pages/TeamList";
+import TeamDetail from "./pages/TeamDetail";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 
 
@@ -40,8 +49,9 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         <Routes>
-          
+
           <Route path="/" element={<AuthPage />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
@@ -49,7 +59,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-         
+
           <Route
             path="/dashboard"
             element={
@@ -78,54 +88,115 @@ export default function App() {
           />
 
           <Route
-          path="/dashboard/snippets/:id"
-          element={
-          <ProtectedRoute>
-          <SnippetDetail />
-          </ProtectedRoute>
-          }
+            path="/dashboard/snippets/:id"
+            element={
+              <ProtectedRoute>
+                <SnippetDetail />
+              </ProtectedRoute>
+            }
           />
-         
+
           <Route
-  path="/dashboard/snippets/edit/:id"
-  element={
-    <ProtectedRoute>
-      <EditSnippet />
-    </ProtectedRoute>
-  }
-/>
+            path="/dashboard/snippets/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditSnippet />
+              </ProtectedRoute>
+            }
+          />
 
-<Route path="/public/snippet/:id" element={<PublicSnippet />} />
+          <Route path="/public/snippet/:id" element={<PublicSnippet />} />
 
-<Route
-  path="/dashboard/snippets/:id/history"
-  element={
-    <ProtectedRoute>
-      <SnippetHistory />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/dashboard/snippets/:id/history"
+            element={
+              <ProtectedRoute>
+                <SnippetHistory />
+              </ProtectedRoute>
+            }
+          />
 
-<Route
-  path="/dashboard/folders/create"
-  element={
-    <ProtectedRoute>
-      <CreateFolder />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/dashboard/folders/create"
+            element={
+              <ProtectedRoute>
+                <CreateFolder />
+              </ProtectedRoute>
+            }
+          />
 
-<Route
-  path="/dashboard/folder/:id"
-  element={
-    <ProtectedRoute>
-      <FolderDetail />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/dashboard/folder/:id"
+            element={
+              <ProtectedRoute>
+                <FolderDetail />
+              </ProtectedRoute>
+            }
+          />
 
 
 
+          <Route
+            path="/dashboard/trending"
+            element={
+              <ProtectedRoute>
+                <TrendingSnippets />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Team Routes */}
+          <Route
+            path="/dashboard/teams"
+            element={
+              <ProtectedRoute>
+                <TeamList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/teams/create"
+            element={
+              <ProtectedRoute>
+                <CreateTeam />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/teams/:id"
+            element={
+              <ProtectedRoute>
+                <TeamDetail />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
