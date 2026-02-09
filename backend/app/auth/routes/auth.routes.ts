@@ -34,12 +34,12 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
-    const user = req.user as any;
+    const user = req.user!;
 
-    const accessToken = generateAccessToken({ id: user._id });
-    const refreshToken = generateRefreshToken({ id: user._id });
+    const accessToken = generateAccessToken({ id: user._id.toString() });
+    const refreshToken = generateRefreshToken({ id: user._id.toString() });
 
-    
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",

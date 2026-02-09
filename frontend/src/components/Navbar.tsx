@@ -5,14 +5,12 @@ import {
   Typography,
   Button,
   IconButton,
-  Box,
   Menu,
   MenuItem,
   Avatar,
   Badge,
   Tooltip,
   InputBase,
-  alpha,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -22,50 +20,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
-import { styled } from "@mui/material/styles";
-import List from "@mui/material/List";
-import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "25ch",
-    },
-  },
-}));
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -112,14 +68,14 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="sticky" elevation={0} sx={{ bgcolor: "primary.main" }}>
+    <AppBar position="sticky" elevation={0} className="bg-[#1a73e8]">
       <Toolbar>
         <IconButton
           size="large"
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          sx={{ mr: 2, display: { md: "none" } }}
+          className="mr-4 md:hidden"
         >
           <MenuIcon />
         </IconButton>
@@ -128,45 +84,40 @@ export default function Navbar() {
           variant="h6"
           noWrap
           component="div"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            fontWeight: 800,
-            cursor: "pointer",
-            color: "#ffffff",
-            letterSpacing: "-0.5px",
-            fontSize: "1.4rem",
-            mr: 4
-          }}
+          className="hidden sm:block font-extrabold cursor-pointer text-white tracking-tight text-xl mr-8"
           onClick={() => navigate("/dashboard")}
         >
           SnippetManager
         </Typography>
 
-        <Search sx={{ display: 'flex', alignItems: 'center' }}>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search snippets..."
-            inputProps={{ "aria-label": "search" }}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
-          />
-          <IconButton
-            size="small"
-            sx={{ color: 'white', mr: 0.5, opacity: searchQuery ? 1 : 0.5 }}
-            onClick={triggerSearch}
-            disabled={!searchQuery}
-          >
-            <SearchIcon fontSize="small" />
-          </IconButton>
-        </Search>
+        {token && (
+          <div className="relative rounded bg-white/15 hover:bg-white/25 mr-4 ml-0 w-full sm:ml-6 sm:w-auto flex items-center">
+            <div className="px-4 h-full absolute pointer-events-none flex items-center justify-center">
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search snippets..."
+              inputProps={{ "aria-label": "search" }}
+              className="text-inherit w-full [&_.MuiInputBase-input]:py-2 [&_.MuiInputBase-input]:pr-2 [&_.MuiInputBase-input]:pl-12 [&_.MuiInputBase-input]:transition-all [&_.MuiInputBase-input]:w-full md:[&_.MuiInputBase-input]:w-[25ch]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
+            <IconButton
+              size="small"
+              className={`text-white mr-1 ${searchQuery ? 'opacity-100' : 'opacity-50'}`}
+              onClick={triggerSearch}
+              disabled={!searchQuery}
+            >
+              <SearchIcon fontSize="small" />
+            </IconButton>
+          </div>
+        )}
 
-        <Box sx={{ flexGrow: 1 }} />
+        <div className="flex-grow" />
 
         {token ? (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <div className="flex items-center gap-2">
             <Tooltip title="Notifications">
               <IconButton size="large" color="inherit" onClick={handleNotiOpen}>
                 <Badge badgeContent={4} color="error">
@@ -185,12 +136,12 @@ export default function Navbar() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main" }}>
+                <Avatar className="w-8 h-8 bg-secondary">
                   <AccountCircle />
                 </Avatar>
               </IconButton>
             </Tooltip>
-          </Box>
+          </div>
         ) : (
           <Button color="inherit" onClick={() => navigate("/")}>Login</Button>
         )}
@@ -211,13 +162,13 @@ export default function Navbar() {
           onClose={handleMenuClose}
         >
           <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard/profile"); }}>
-            <AccountCircle sx={{ mr: 2 }} /> Profile
+            <AccountCircle className="mr-4" /> Profile
           </MenuItem>
           <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard/settings"); }}>
-            <SettingsIcon sx={{ mr: 2 }} /> Settings
+            <SettingsIcon className="mr-4" /> Settings
           </MenuItem>
-          <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
-            <LogoutIcon sx={{ mr: 2 }} /> Logout
+          <MenuItem onClick={handleLogout} className="text-red-500">
+            <LogoutIcon className="mr-4" /> Logout
           </MenuItem>
         </Menu>
 
@@ -226,37 +177,37 @@ export default function Navbar() {
           anchorEl={notiAnchorEl}
           open={isNotiOpen}
           onClose={handleNotiClose}
-          PaperProps={{
-            sx: { width: 320, maxHeight: 400, mt: 1.5, borderRadius: 3 }
+          slotProps={{
+            paper: {
+              className: "w-[320px] max-h-[400px] mt-4 rounded-xl shadow-lg"
+            }
           }}
           transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="subtitle1" fontWeight={700}>Notifications</Typography>
-            <Typography variant="caption" color="primary" sx={{ cursor: 'pointer' }}>Mark all as read</Typography>
-          </Box>
+          <div className="p-4 flex justify-between items-center">
+            <Typography variant="subtitle1" className="font-bold">Notifications</Typography>
+            <Typography variant="caption" color="primary" className="cursor-pointer">Mark all as read</Typography>
+          </div>
           <Divider />
-          <List sx={{ p: 0 }}>
+          <div className="p-0">
             {[
               { id: 1, text: "New comment on 'Authentication flow'", time: "2m ago" },
               { id: 2, text: "Team 'Frontend' invited you", time: "1h ago" },
               { id: 3, text: "Your snippet 'Passport Config' was forked", time: "3h ago" },
               { id: 4, text: "Welcome to SnippetManager!", time: "1d ago" },
             ].map((noti) => (
-              <MenuItem key={noti.id} onClick={handleNotiClose} sx={{ py: 1.5, borderBottom: '1px solid #f1f5f9' }}>
-                <ListItemText
-                  primary={noti.text}
-                  secondary={noti.time}
-                  primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
-                  secondaryTypographyProps={{ variant: 'caption' }}
-                />
+              <MenuItem key={noti.id} onClick={handleNotiClose} className="py-4 border-b border-slate-100">
+                <div className="flex flex-col">
+                  <Typography variant="body2" className="font-medium">{noti.text}</Typography>
+                  <Typography variant="caption" color="text.secondary">{noti.time}</Typography>
+                </div>
               </MenuItem>
             ))}
-          </List>
-          <Box sx={{ p: 1, textAlign: 'center' }}>
+          </div>
+          <div className="p-2 text-center">
             <Button size="small" fullWidth>View all notifications</Button>
-          </Box>
+          </div>
         </Menu>
       </Toolbar>
     </AppBar>

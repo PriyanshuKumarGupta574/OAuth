@@ -43,8 +43,8 @@ router.get(
     session: false,
     failureRedirect: `${process.env.CLIENT_URL}/login`,
   }),
-  (req: any, res) => {
-    const user = req.user;
+  (req, res) => {
+    const user = req.user!;
 
 
     const accessToken = generateAccessToken({
@@ -85,8 +85,8 @@ router.get(
     session: false,
     failureRedirect: `${process.env.CLIENT_URL}/login`,
   }),
-  (req: any, res) => {
-    const user = req.user;
+  (req, res) => {
+    const user = req.user!;
 
     const accessToken = generateAccessToken({
       id: user._id.toString(),

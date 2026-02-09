@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+// Migrated to Tailwind CSS
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FolderSidebar from "../components/FolderSidebar";
@@ -6,33 +6,20 @@ import FolderSidebar from "../components/FolderSidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
 
-   
-      <Box sx={{ flex: 1, display: "flex" }}>
-        
+      <div className="flex-1 flex overflow-hidden">
         <FolderSidebar />
 
-        
-        <Box
-          sx={{
-            flex: 1,
-            px: { xs: 2, md: 4 },
-            py: 3,
-            maxWidth: "1200px",
-            mx: "auto",
-            width: "100%",
-          }}
-        >
+        <div className="flex-1 px-4 md:px-10 py-8 max-w-[1400px] mx-auto w-full overflow-y-auto">
           {children}
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       <Footer />
-    </Box>
+    </div>
   );
 }
-
 
 

@@ -20,8 +20,14 @@ export const getGistById = async (gistId: string, accessToken: string) => {
     return response.data;
 };
 
-export const createGist = async (accessToken: string, snippet: any) => {
-    const files: any = {};
+export interface GistSnippet {
+    title: string;
+    language: string;
+    code: string;
+}
+
+export const createGist = async (accessToken: string, snippet: GistSnippet) => {
+    const files: { [key: string]: { content: string } } = {};
     const filename = `${snippet.title || 'snippet'}.${snippet.language === "javascript" ? "js" : snippet.language}`;
     files[filename] = { content: snippet.code };
 

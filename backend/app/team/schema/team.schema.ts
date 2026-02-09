@@ -1,11 +1,17 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface ITeam {
+export interface PopulatedUser {
+    _id: mongoose.Types.ObjectId;
+    name: string;
+    email: string;
+}
+
+export interface ITeam extends Document {
     name: string;
     description?: string;
-    owner: mongoose.Types.ObjectId;
+    owner: mongoose.Types.ObjectId | PopulatedUser;
     members: {
-        user: mongoose.Types.ObjectId;
+        user: mongoose.Types.ObjectId | PopulatedUser;
         role: "editor" | "viewer";
     }[];
     createdAt: Date;

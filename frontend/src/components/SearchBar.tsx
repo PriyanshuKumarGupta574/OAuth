@@ -1,19 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-    Box,
     TextField,
     MenuItem,
     Button,
-    Stack,
-    Autocomplete,
-    Chip,
     InputAdornment,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
+import type { SnippetFilters } from "../types";
+
 interface SearchBarProps {
-    onSearch: (filters: any) => void;
+    onSearch: (filters: SnippetFilters) => void;
 }
 
 export default function SearchBar({ onSearch }: SearchBarProps) {
@@ -45,8 +43,8 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
     };
 
     return (
-        <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <div className="mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <TextField
                     fullWidth
                     label="Search snippets..."
@@ -65,7 +63,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                     variant="contained"
                     size="large"
                     onClick={handleSearch}
-                    sx={{ minWidth: 100 }}
+                    className="min-w-[120px] bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold"
                 >
                     Search
                 </Button>
@@ -73,14 +71,15 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                     variant="outlined"
                     onClick={() => setShowFilters(!showFilters)}
                     startIcon={<FilterListIcon />}
+                    className="min-w-[120px]"
                 >
                     Filters
                 </Button>
-            </Box>
+            </div>
 
             {showFilters && (
-                <Box sx={{ p: 2, bgcolor: "background.paper", borderRadius: 1, boxShadow: 1 }}>
-                    <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ mb: 2 }}>
+                <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <TextField
                             select
                             label="Language"
@@ -129,15 +128,15 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                             onChange={(e) => setEndDate(e.target.value)}
                             fullWidth
                         />
-                    </Stack>
+                    </div>
 
-                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button color="error" onClick={clearFilters}>
+                    <div className="flex justify-end">
+                        <Button color="error" onClick={clearFilters} className="font-semibold">
                             Clear All Filters
                         </Button>
-                    </Box>
-                </Box>
+                    </div>
+                </div>
             )}
-        </Box>
+        </div>
     );
 }

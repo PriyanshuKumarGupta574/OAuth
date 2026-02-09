@@ -1,4 +1,4 @@
-import Team, { ITeam } from "../schema/team.schema";
+import Team, { ITeam, PopulatedUser } from "../schema/team.schema";
 import mongoose from "mongoose";
 
 export const createTeamService = async (
@@ -9,7 +9,7 @@ export const createTeamService = async (
     const team = await Team.create({
         name,
         description,
-        owner: userId,
+        owner: new mongoose.Types.ObjectId(userId),
         members: [], // Owner is separate from members list for clarity, or implied as super-admin
     });
     return team;
@@ -18,7 +18,7 @@ export const createTeamService = async (
 export const getTeamsForUserService = async (userId: string) => {
     // Find teams where user is owner OR a member
     return await Team.find({
-        $or: [{ owner: userId }, { "members.user": userId }],
+        $or: [{ owner: new mongoose.Types.ObjectId(userId) }, { "members.user": new mongoose.Types.ObjectId(userId) }],
     })
         .populate("owner", "name email")
         .populate("members.user", "name email")
@@ -35,7 +35,7 @@ export const getTeamByIdService = async (teamId: string, userId: string) => {
     // Check if user has access
     const isOwner = team.owner._id.toString() === userId;
     const isMember = team.members.some(
-        (m) => (m.user as any)._id.toString() === userId
+        (m) => (m.user as PopulatedUser)._id.toString() === userId
     );
 
     if (!isOwner && !isMember) {

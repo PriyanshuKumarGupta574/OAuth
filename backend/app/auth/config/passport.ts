@@ -1,5 +1,6 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GoogleStrategy, Profile as GoogleProfile } from "passport-google-oauth20";
+import { Strategy as GitHubStrategy, Profile as GitHubProfile } from "passport-github2";
 import User from "../schemas/user.schema";
 
 passport.use(
@@ -9,19 +10,18 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: process.env.GOOGLE_CALLBACK_URL!,
     },
-    async (_accessToken, _refreshToken, profile, done) => {
+    async (_accessToken: string, _refreshToken: string, profile: GoogleProfile, done: (err: Error | null, user?: Express.User | false) => void) => {
       try {
         const googleEmail = profile.emails?.[0]?.value;
         const googleId = profile.id;
 
         if (!googleEmail) {
-          return done(new Error("Google account has no email"), undefined);
+          return done(new Error("Google account has no email"));
         }
-
 
         const existingGoogleUser = await User.findOne({ googleId });
         if (existingGoogleUser && existingGoogleUser.email !== googleEmail) {
-          return done(new Error("Google account already linked"), undefined);
+          return done(new Error("Google account already linked"));
         }
 
         let user = await User.findOne({ email: googleEmail });
@@ -45,15 +45,13 @@ passport.use(
           await user.save();
         }
 
-        return done(null, user);
+        return done(null, user as unknown as Express.User);
       } catch (err) {
-        return done(err as Error, undefined);
+        return done(err as Error);
       }
     }
   )
 );
-
-import { Strategy as GitHubStrategy } from "passport-github2";
 
 if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(
@@ -63,13 +61,13 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         callbackURL: process.env.GITHUB_CALLBACK_URL || "http://localhost:5000/api/auth/github/callback",
       },
-      async (accessToken: string, _refreshToken: string, profile: any, done: any) => {
+      async (accessToken: string, _refreshToken: string, profile: GitHubProfile, done: (err: Error | null, user?: Express.User | false) => void) => {
         try {
           const githubEmail = profile.emails?.[0]?.value;
           const githubId = profile.id;
 
           if (!githubEmail) {
-            return done(new Error("GitHub account has no public email"), undefined);
+            return done(new Error("GitHub account has no public email"));
           }
 
           let user = await User.findOne({ githubId });
@@ -95,9 +93,9 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
             await user.save();
           }
 
-          return done(null, user);
+          return done(null, user as unknown as Express.User);
         } catch (err) {
-          return done(err, undefined);
+          return done(err as Error);
         }
       }
     )
@@ -107,5 +105,3 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
 }
 
 export default passport;
-
-

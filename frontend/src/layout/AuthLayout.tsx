@@ -1,21 +1,14 @@
-import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <main className="flex-1 flex justify-center items-center">
         {children}
-      </Box>
+      </main>
       <Footer />
-    </Box>
+    </div>
   );
 }

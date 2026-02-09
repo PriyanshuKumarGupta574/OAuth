@@ -1,6 +1,7 @@
 import api from "./api";
+import type { SnippetData } from "../types";
 
-export const createSnippet = (data: any) =>
+export const createSnippet = (data: SnippetData) =>
   api.post("/snippets", data);
 
 
@@ -54,7 +55,7 @@ export const forkSnippet = (id: string) =>
   api.post(`/snippets/${id}/fork`);
 
 
-export const updateSnippet = (id: string, data: any) =>
+export const updateSnippet = (id: string, data: Partial<SnippetData>) =>
   api.put(`/snippets/${id}`, data);
 
 export const deleteSnippet = (id: string) => {

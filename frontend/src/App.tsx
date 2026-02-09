@@ -1,5 +1,5 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
-import { AuthProvider } from "./context/AuthContext";
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthLayout from "./layout/AuthLayout";
@@ -29,7 +29,12 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
 function AuthPage() {
+  const { token } = useAuth();
   const [isLogin, setIsLogin] = useState(false);
+
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <AuthLayout>

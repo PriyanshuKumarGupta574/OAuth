@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    Box,
-    Card,
     Typography,
-    Grid,
     Chip,
     CircularProgress,
 } from "@mui/material";
@@ -51,130 +48,100 @@ export default function TrendingSnippets() {
     if (loading) {
         return (
             <DashboardLayout>
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+                <div className="flex justify-center mt-20">
                     <CircularProgress />
-                </Box>
+                </div>
             </DashboardLayout>
         );
     }
 
     return (
         <DashboardLayout>
-            <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4, p: 3 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-                    <TrendingUpIcon sx={{ fontSize: 40, color: "primary.main" }} />
-                    <Typography variant="h4" fontWeight="bold">
+            <div className="max-w-[1200px] mx-auto mt-8 p-6">
+                <div className="flex items-center gap-4 mb-10">
+                    <TrendingUpIcon className="text-4xl text-[#1a73e8]" />
+                    <Typography variant="h4" className="font-extrabold text-slate-800">
                         Trending Snippets 🔥
                     </Typography>
-                </Box>
+                </div>
 
                 {snippets.length === 0 ? (
-                    <Typography color="text.secondary">
+                    <Typography className="text-slate-500 text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
                         No trending snippets yet. Be the first to create one!
                     </Typography>
                 ) : (
-                    <Grid container spacing={3}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {snippets.map((snippet, index) => (
-                            <Grid item xs={12} md={6} key={snippet._id}>
-                                <Card
-                                    sx={{
-                                        p: 3,
-                                        cursor: "pointer",
-                                        transition: "all 0.3s",
-                                        "&:hover": {
-                                            transform: "translateY(-4px)",
-                                            boxShadow: 6,
-                                        },
-                                        position: "relative",
-                                    }}
-                                    onClick={() => navigate(`/dashboard/snippets/${snippet._id}`)}
-                                >
-                                    {/* Trending Rank Badge */}
-                                    {index < 3 && (
-                                        <Box
-                                            sx={{
-                                                position: "absolute",
-                                                top: 10,
-                                                right: 10,
-                                                bgcolor:
-                                                    index === 0
-                                                        ? "gold"
-                                                        : index === 1
-                                                            ? "silver"
-                                                            : "#cd7f32",
-                                                color: "white",
-                                                borderRadius: "50%",
-                                                width: 32,
-                                                height: 32,
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            #{index + 1}
-                                        </Box>
-                                    )}
-
-                                    <Typography variant="h6" fontWeight="bold" mb={1}>
-                                        {snippet.title}
-                                    </Typography>
-
-                                    <Typography variant="body2" color="text.secondary" mb={2}>
-                                        by {snippet.author.name} • {snippet.language}
-                                    </Typography>
-
-                                    {/* Tags */}
-                                    <Box sx={{ mb: 2 }}>
-                                        {snippet.tags.slice(0, 3).map((tag) => (
-                                            <Chip
-                                                key={tag}
-                                                label={tag}
-                                                size="small"
-                                                sx={{ mr: 1, mb: 1 }}
-                                            />
-                                        ))}
-                                    </Box>
-
-                                    {/* Stats */}
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            gap: 3,
-                                            alignItems: "center",
-                                            flexWrap: "wrap",
-                                        }}
+                            <div
+                                key={snippet._id}
+                                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative group"
+                                onClick={() => navigate(`/dashboard/snippets/${snippet._id}`)}
+                            >
+                                {/* Trending Rank Badge */}
+                                {index < 3 && (
+                                    <div
+                                        className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-lg ${index === 0
+                                            ? "bg-amber-400"
+                                            : index === 1
+                                                ? "bg-slate-400"
+                                                : "bg-amber-700"
+                                            }`}
                                     >
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                            <VisibilityIcon fontSize="small" color="action" />
-                                            <Typography variant="body2">{snippet.views}</Typography>
-                                        </Box>
+                                        #{index + 1}
+                                    </div>
+                                )}
 
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                            <ForkRightIcon fontSize="small" color="action" />
-                                            <Typography variant="body2">{snippet.forks}</Typography>
-                                        </Box>
+                                <Typography variant="h6" className="font-bold mb-2 group-hover:text-[#1a73e8] transition-colors">
+                                    {snippet.title}
+                                </Typography>
 
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                            <CommentIcon fontSize="small" color="action" />
-                                            <Typography variant="body2">
-                                                {snippet.commentCount}
-                                            </Typography>
-                                        </Box>
+                                <Typography variant="body2" className="text-slate-500 mb-4">
+                                    by <span className="font-semibold text-slate-700">{snippet.author.name}</span> • <span className="font-mono text-xs">{snippet.language}</span>
+                                </Typography>
 
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                            <TrendingUpIcon fontSize="small" color="primary" />
-                                            <Typography variant="body2" color="primary.main" fontWeight="bold">
-                                                {snippet.trendingScore.toFixed(2)}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Card>
-                            </Grid>
+                                {/* Tags */}
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {snippet.tags.slice(0, 3).map((tag) => (
+                                        <Chip
+                                            key={tag}
+                                            label={tag}
+                                            size="small"
+                                            className="bg-slate-100 text-slate-600 border-none font-medium"
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Stats */}
+                                <div className="flex gap-6 items-center flex-wrap pt-4 border-t border-slate-50">
+                                    <div className="flex items-center gap-1.5 text-slate-500">
+                                        <VisibilityIcon className="text-sm" />
+                                        <Typography variant="body2" className="font-medium">{snippet.views}</Typography>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 text-slate-500">
+                                        <ForkRightIcon className="text-sm" />
+                                        <Typography variant="body2" className="font-medium">{snippet.forks}</Typography>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 text-slate-500">
+                                        <CommentIcon className="text-sm" />
+                                        <Typography variant="body2" className="font-medium">
+                                            {snippet.commentCount}
+                                        </Typography>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 text-[#1a73e8] ml-auto">
+                                        <TrendingUpIcon className="text-sm" />
+                                        <Typography variant="body2" className="font-bold">
+                                            {snippet.trendingScore.toFixed(2)}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </div>
                         ))}
-                    </Grid>
+                    </div>
                 )}
-            </Box>
+            </div>
         </DashboardLayout>
     );
 }

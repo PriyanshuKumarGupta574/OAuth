@@ -1,4 +1,9 @@
-import Comment from "../schema/comment.schema";
+import Comment, { IComment } from "../schema/comment.schema";
+import mongoose from "mongoose";
+
+export interface CommentWithReplies extends Omit<IComment, 'replies'> {
+  replies: CommentWithReplies[];
+}
 
 export const createCommentService = async (
   snippetId: string,
@@ -6,14 +11,14 @@ export const createCommentService = async (
   text: string,
   parentCommentId?: string
 ) => {
-  const commentData: any = {
-    snippet: snippetId,
-    author: userId,
+  const commentData: Partial<IComment> = {
+    snippet: new mongoose.Types.ObjectId(snippetId),
+    author: new mongoose.Types.ObjectId(userId),
     text,
   };
 
   if (parentCommentId) {
-    commentData.parentComment = parentCommentId;
+    commentData.parentComment = new mongoose.Types.ObjectId(parentCommentId);
   }
 
   const comment = await Comment.create(commentData);
@@ -31,8 +36,8 @@ export const getCommentsBySnippetService = async (snippetId: string) => {
     .lean();
 
   // Recursively populate replies for each comment
-  const populateReplies = async (comment: any): Promise<any> => {
-    const replies = await Comment.find({ parentComment: comment._id })
+  const populateReplies = async (commentId: mongoose.Types.ObjectId | string): Promise<CommentWithReplies[]> => {
+    const replies = await Comment.find({ parentComment: commentId })
       .populate("author", "name email")
       .sort({ createdAt: 1 })
       .lean();
@@ -40,18 +45,18 @@ export const getCommentsBySnippetService = async (snippetId: string) => {
     const repliesWithNested = await Promise.all(
       replies.map(async (reply) => ({
         ...reply,
-        replies: await populateReplies(reply),
+        replies: await populateReplies(reply._id as mongoose.Types.ObjectId),
       }))
     );
 
-    return repliesWithNested;
+    return repliesWithNested as unknown as CommentWithReplies[];
   };
 
   // Add replies to each top-level comment
   const commentsWithReplies = await Promise.all(
     topLevelComments.map(async (comment) => ({
       ...comment,
-      replies: await populateReplies(comment),
+      replies: await populateReplies(comment._id as mongoose.Types.ObjectId),
     }))
   );
 
@@ -63,4 +68,3 @@ export const getRepliesByCommentService = async (commentId: string) => {
     .populate("author", "name email")
     .sort({ createdAt: 1 });
 };
-

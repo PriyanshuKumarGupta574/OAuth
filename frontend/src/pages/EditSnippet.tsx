@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
-  Box,
-  Card,
   TextField,
   Typography,
   Button,
   MenuItem,
-  Stack,
-  Divider,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
@@ -17,11 +13,7 @@ import { useParams, useNavigate } from "react-router";
 import Editor from "@monaco-editor/react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getSnippetById, updateSnippet } from "../services/snippet.service";
-import {
-  snippetContainer,
-  snippetCard,
-  snippetButton,
-} from "../styles/snippet.styles";
+
 import prettier from "prettier/standalone";
 import parserBabel from "prettier/parser-babel";
 
@@ -78,81 +70,92 @@ export default function EditSnippet() {
 
   return (
     <DashboardLayout>
-      <Box sx={snippetContainer}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-          <EditIcon color="primary" sx={{ fontSize: 32 }} />
-          <Typography variant="h4" fontWeight={700}>
+      <div className="max-w-[1000px] mx-auto mt-10 p-4">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3 bg-blue-50 rounded-2xl text-[#1a73e8]">
+            <EditIcon className="text-3xl" />
+          </div>
+          <Typography variant="h4" className="font-extrabold text-slate-800">
             Edit Snippet
           </Typography>
-        </Box>
+        </div>
 
-        <Card sx={snippetCard}>
-          <TextField
-            label="Snippet Title"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <TextField
+              label="Snippet Title"
+              fullWidth
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl md:col-span-2"
+              variant="outlined"
+            />
 
-          <TextField
-            select
-            label="Language"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            {[
-              "javascript",
-              "typescript",
-              "python",
-              "java",
-              "cpp",
-              "csharp",
-              "go",
-              "rust",
-              "php",
-            ].map((lang) => (
-              <MenuItem key={lang} value={lang}>
-                {lang}
-              </MenuItem>
-            ))}
-          </TextField>
+            <TextField
+              select
+              label="Language"
+              fullWidth
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
+              variant="outlined"
+            >
+              {[
+                "javascript",
+                "typescript",
+                "python",
+                "java",
+                "cpp",
+                "csharp",
+                "go",
+                "rust",
+                "php",
+              ].map((lang) => (
+                <MenuItem key={lang} value={lang}>
+                  {lang}
+                </MenuItem>
+              ))}
+            </TextField>
 
-          <TextField
-            select
-            label="Visibility"
-            fullWidth
-            sx={{ mb: 3 }}
-            value={visibility}
-            onChange={(e) =>
-              setVisibility(e.target.value as "public" | "private" | "team")
-            }
-          >
-            <MenuItem value="public">Public</MenuItem>
-            <MenuItem value="private">Private</MenuItem>
-            <MenuItem value="team">Team Only</MenuItem>
-          </TextField>
+            <TextField
+              select
+              label="Visibility"
+              fullWidth
+              value={visibility}
+              onChange={(e) =>
+                setVisibility(e.target.value as "public" | "private" | "team")
+              }
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
+              variant="outlined"
+            >
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private</MenuItem>
+              <MenuItem value="team">Team Only</MenuItem>
+            </TextField>
+          </div>
 
-          <Box sx={{ mb: 3 }}>
+          <div className="rounded-2xl overflow-hidden border border-slate-200 mb-8 shadow-inner">
             <Editor
-              height="400px"
+              height="500px"
               language={language}
               value={code}
               onChange={(value) => setCode(value || "")}
               theme="vs-dark"
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                padding: { top: 20, bottom: 20 }
+              }}
             />
-          </Box>
+          </div>
 
-          <Divider sx={{ my: 3 }} />
-
-          <Stack direction="row" spacing={2}>
+          <div className="pt-8 border-t border-slate-100 flex flex-col sm:flex-row gap-4">
             <Button
               variant="outlined"
               startIcon={<AutoFixHighIcon />}
               onClick={formatCode}
-              sx={{ borderRadius: "10px" }}
+              className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-8 py-4 rounded-xl text-lg flex-1"
             >
               Auto Format
             </Button>
@@ -161,22 +164,14 @@ export default function EditSnippet() {
               variant="contained"
               size="large"
               startIcon={<SaveIcon />}
-              sx={{
-                ...snippetButton,
-                borderRadius: "10px",
-                px: 4,
-                fontWeight: 700
-              }}
               onClick={handleUpdate}
+              className="bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold normal-case px-8 py-4 rounded-xl text-lg flex-1"
             >
               Update Snippet
             </Button>
-          </Stack>
-        </Card>
-      </Box>
+          </div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }
-
-
-

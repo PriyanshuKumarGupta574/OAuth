@@ -1,9 +1,7 @@
 import {
-  Card,
   TextField,
   Button,
   Typography,
-  Stack,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router";
@@ -38,45 +36,37 @@ export default function ResetPassword() {
 
   return (
     <AuthLayout>
-      <Card sx={{ width: 420, p: 4, borderRadius: "16px" }}>
-        <Typography variant="h5" mb={2}>
+      <div className="w-[420px] p-8 rounded-2xl bg-gradient-to-br from-white to-[#92a1b6] shadow-2xl border-none">
+        <Typography variant="h5" className="mb-6 font-bold text-slate-800 text-center">
           Reset Password
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
+          <div className="flex flex-col gap-4">
             <TextField
               label="New Password"
               type="password"
               {...register("password", { required: true })}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                },
-              }}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
             />
 
             <TextField
               label="Confirm Password"
               type="password"
               {...register("confirmPassword", { required: true })}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                },
-              }}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
             />
 
             <Button
               type="submit"
               variant="contained"
-              sx={{ borderRadius: "12px" }}
+              className="rounded-xl py-3 bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold normal-case text-lg mt-2"
             >
               Reset Password
             </Button>
-          </Stack>
+          </div>
         </form>
-      </Card>
+      </div>
     </AuthLayout>
   );
 }

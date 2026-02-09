@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
   Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Button,
   IconButton,
   Collapse,
-  ListItemIcon,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -30,6 +23,7 @@ type Snippet = {
   _id: string;
   title: string;
   language: string;
+  folder?: string | null;
 };
 
 type Folder = {
@@ -74,82 +68,60 @@ function DroppableFolder({
 
   return (
     <div ref={setNodeRef}>
-      <ListItem
-        disablePadding
-        secondaryAction={
-          <IconButton edge="end" onClick={() => onDelete(folder._id)}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        }
-      >
-        <ListItemButton onClick={() => onToggle(folder._id)} dense>
-          <ListItemIcon sx={{ minWidth: 32 }}>
+      <div className="flex items-center group/folder">
+        <div
+          onClick={() => onToggle(folder._id)}
+          className="flex-1 flex items-center py-2 px-3 hover:bg-slate-50 cursor-pointer rounded-xl transition-colors min-h-[44px]"
+        >
+          <div className="min-w-[32px] flex items-center text-slate-400">
             {folder.isExpanded ? (
               <ExpandMoreIcon fontSize="small" />
             ) : (
               <ChevronRightIcon fontSize="small" />
             )}
-          </ListItemIcon>
-          <ListItemIcon sx={{ minWidth: 32 }}>
+          </div>
+          <div className="min-w-[32px] flex items-center">
             {folder.isExpanded ? (
-              <FolderOpenIcon fontSize="small" color="primary" />
+              <FolderOpenIcon fontSize="small" className="text-[#1a73e8]" />
             ) : (
-              <FolderIcon fontSize="small" />
+              <FolderIcon fontSize="small" className="text-slate-400" />
             )}
-          </ListItemIcon>
-          <ListItemText
-            primary={folder.name}
-            primaryTypographyProps={{ fontSize: 14 }}
-          />
-        </ListItemButton>
-      </ListItem>
+          </div>
+          <span className="text-sm font-semibold text-slate-700 truncate">
+            {folder.name}
+          </span>
+        </div>
+        <IconButton
+          size="small"
+          onClick={() => onDelete(folder._id)}
+          className="opacity-0 group-hover/folder:opacity-100 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all mr-1"
+        >
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </div>
 
       <Collapse in={folder.isExpanded} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
+        <div className="pl-6 space-y-1 mt-1">
           {folder.snippets && folder.snippets.length > 0 ? (
             folder.snippets.map((snippet) => (
-              <ListItem
+              <div
                 key={snippet._id}
-                disablePadding
-                sx={{ pl: 6 }}
+                onClick={() => onSnippetClick(snippet._id)}
+                className={`flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all ${activeSnippetId === snippet._id
+                  ? "bg-[#1a73e8]/10 text-[#1a73e8] shadow-sm"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
               >
-                <ListItemButton
-                  dense
-                  onClick={() => onSnippetClick(snippet._id)}
-                  selected={activeSnippetId === snippet._id}
-                  sx={{
-                    "&.Mui-selected": {
-                      backgroundColor: "primary.light",
-                      "&:hover": {
-                        backgroundColor: "primary.light",
-                      },
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <span>{getLanguageIcon(snippet.language)}</span>
-                        <span style={{ fontSize: 13 }}>{snippet.title}</span>
-                      </Box>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
+                <span className="text-sm">{getLanguageIcon(snippet.language)}</span>
+                <span className="text-xs font-medium truncate">{snippet.title}</span>
+              </div>
             ))
           ) : (
-            <ListItem sx={{ pl: 6 }}>
-              <ListItemText
-                primary="No snippets"
-                primaryTypographyProps={{
-                  fontSize: 12,
-                  color: "text.secondary",
-                  fontStyle: "italic",
-                }}
-              />
-            </ListItem>
+            <div className="py-2 px-10 text-[11px] text-slate-400 italic">
+              No snippets
+            </div>
           )}
-        </List>
+        </div>
       </Collapse>
     </div>
   );
@@ -195,7 +167,7 @@ export default function FolderSidebar() {
       const res = await getSnippets();
       // Filter snippets without folder
       const unassigned = res.data.snippets.filter(
-        (s: any) => !s.folder || s.folder === null
+        (s: Snippet) => !s.folder || s.folder === null
       );
       setUnassignedSnippets(unassigned);
     } catch (error) {
@@ -227,60 +199,46 @@ export default function FolderSidebar() {
   };
 
   return (
-    <Box sx={{ width: 280, borderRight: "1px solid #e0e0e0", p: 2, height: "100vh", overflow: "auto" }}>
+    <div className="w-[280px] border-r border-slate-200 p-4 h-screen overflow-auto bg-white flex flex-col">
+      {/* Navigation Section */}
+      <div className="space-y-1 mb-8">
+        {[
+          { label: "Dashboard", icon: "📊", path: "/dashboard/analytics" },
+          { label: "Trending", icon: "🔥", path: "/dashboard/trending" },
+          { label: "Teams", icon: "👥", path: "/dashboard/teams" },
+        ].map((item) => (
+          <div
+            key={item.path}
+            onClick={() => navigate(item.path)}
+            className="flex items-center gap-3 py-2.5 px-3 rounded-xl cursor-pointer hover:bg-slate-50 transition-all text-slate-700 font-semibold group"
+          >
+            <span className="text-xl group-hover:scale-110 transition-transform">{item.icon}</span>
+            <span className="text-sm">{item.label}</span>
+          </div>
+        ))}
 
-      {/* Analytics Section */}
-      <List dense sx={{ mb: 2 }}>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate("/dashboard/analytics")}>
-            <ListItemIcon sx={{ minWidth: 32 }}>
-              <span style={{ fontSize: "1.2rem" }}>📊</span>
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate("/dashboard/trending")}>
-            <ListItemIcon sx={{ minWidth: 32 }}>
-              <span style={{ fontSize: "1.2rem" }}>🔥</span>
-            </ListItemIcon>
-            <ListItemText primary="Trending" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate("/dashboard/teams")}>
-            <ListItemIcon sx={{ minWidth: 32 }}>
-              <span style={{ fontSize: "1.2rem" }}>👥</span>
-            </ListItemIcon>
-            <ListItemText primary="Teams" />
-          </ListItemButton>
-        </ListItem>
+        <div
+          onClick={() => (window.location.href = "http://localhost:5000/api/auth/github")}
+          className="flex items-center gap-3 py-2.5 px-3 rounded-xl cursor-pointer hover:bg-slate-50 transition-all text-slate-700 font-semibold mt-4 border border-dashed border-slate-200"
+        >
+          <GitHubIcon fontSize="small" className="text-slate-800" />
+          <span className="text-sm">Connect GitHub</span>
+        </div>
+      </div>
 
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => window.location.href = "http://localhost:5000/api/auth/github"}>
-            <ListItemIcon sx={{ minWidth: 32 }}>
-              <GitHubIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary="Connect GitHub" />
-          </ListItemButton>
-        </ListItem>
-      </List>
+      <div className="flex items-center justify-between mb-4">
+        <Typography className="text-xs font-bold uppercase tracking-widest text-slate-400">
+          Explorer
+        </Typography>
+        <button
+          onClick={() => navigate("/dashboard/folders/create")}
+          className="p-1 px-3 text-[11px] font-extrabold bg-[#1a73e8] text-white rounded-lg shadow-sm hover:bg-[#1557b0] transition-colors"
+        >
+          NEW FOLDER
+        </button>
+      </div>
 
-      <Typography variant="h6" mb={2} sx={{ fontSize: 16, fontWeight: 600 }}>
-        📁 Explorer
-      </Typography>
-
-      <Button
-        variant="contained"
-        fullWidth
-        size="small"
-        sx={{ mb: 2 }}
-        onClick={() => navigate("/dashboard/folders/create")}
-      >
-        + New Folder
-      </Button>
-
-      <List dense>
+      <div className="flex flex-col gap-1">
         {folders.map((folder) => (
           <DroppableFolder
             key={folder._id}
@@ -293,74 +251,51 @@ export default function FolderSidebar() {
         ))}
 
         {/* Unassigned Snippets Section */}
-        <ListItem disablePadding sx={{ mt: 2 }}>
-          <ListItemButton onClick={() => setShowUnassigned(!showUnassigned)} dense>
-            <ListItemIcon sx={{ minWidth: 32 }}>
+        <div className="mt-4">
+          <div
+            onClick={() => setShowUnassigned(!showUnassigned)}
+            className="flex items-center py-2 px-3 hover:bg-slate-50 cursor-pointer rounded-xl transition-colors min-h-[44px]"
+          >
+            <div className="min-w-[32px] flex items-center text-slate-400">
               {showUnassigned ? (
                 <ExpandMoreIcon fontSize="small" />
               ) : (
                 <ChevronRightIcon fontSize="small" />
               )}
-            </ListItemIcon>
-            <ListItemIcon sx={{ minWidth: 32 }}>
-              <FolderOpenIcon fontSize="small" color="action" />
-            </ListItemIcon>
-            <ListItemText
-              primary="Unassigned"
-              primaryTypographyProps={{ fontSize: 14, color: "text.secondary" }}
-            />
-          </ListItemButton>
-        </ListItem>
+            </div>
+            <div className="min-w-[32px] flex items-center">
+              <FolderOpenIcon fontSize="small" className="text-slate-400" />
+            </div>
+            <span className="text-sm font-semibold text-slate-500 truncate">
+              Unassigned
+            </span>
+          </div>
 
-        <Collapse in={showUnassigned} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {unassignedSnippets.length > 0 ? (
-              unassignedSnippets.map((snippet) => (
-                <ListItem key={snippet._id} disablePadding sx={{ pl: 6 }}>
-                  <ListItemButton
-                    dense
+          <Collapse in={showUnassigned} timeout="auto" unmountOnExit>
+            <div className="pl-6 space-y-1 mt-1">
+              {unassignedSnippets.length > 0 ? (
+                unassignedSnippets.map((snippet) => (
+                  <div
+                    key={snippet._id}
                     onClick={() => handleSnippetClick(snippet._id)}
-                    selected={activeSnippetId === snippet._id}
-                    sx={{
-                      "&.Mui-selected": {
-                        backgroundColor: "primary.light",
-                        "&:hover": {
-                          backgroundColor: "primary.light",
-                        },
-                      },
-                    }}
+                    className={`flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all ${activeSnippetId === snippet._id
+                      ? "bg-[#1a73e8]/10 text-[#1a73e8] shadow-sm"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
                   >
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <span>{getLanguageIcon(snippet.language)}</span>
-                          <span style={{ fontSize: 13 }}>{snippet.title}</span>
-                        </Box>
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))
-            ) : (
-              <ListItem sx={{ pl: 6 }}>
-                <ListItemText
-                  primary="No unassigned snippets"
-                  primaryTypographyProps={{
-                    fontSize: 12,
-                    color: "text.secondary",
-                    fontStyle: "italic",
-                  }}
-                />
-              </ListItem>
-            )}
-          </List>
-        </Collapse>
-      </List>
-    </Box>
+                    <span className="text-sm">{getLanguageIcon(snippet.language)}</span>
+                    <span className="text-xs font-medium truncate">{snippet.title}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="py-2 px-10 text-[11px] text-slate-400 italic">
+                  No unassigned snippets
+                </div>
+              )}
+            </div>
+          </Collapse>
+        </div>
+      </div>
+    </div>
   );
 }
-
-
-
-
-

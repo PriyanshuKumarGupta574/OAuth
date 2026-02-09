@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { Box, Card, Typography, Button, Stack, Tooltip, Divider, Chip } from "@mui/material";
+import { Typography, Button, Tooltip } from "@mui/material";
 //import Editor from "@monaco-editor/react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getSnippetById } from "../services/snippet.service";
@@ -78,129 +78,143 @@ export default function SnippetDetail() {
 
   return (
     <DashboardLayout>
-      <Box sx={{ maxWidth: 1000, mx: "auto", mt: 4 }}>
-        <Card sx={{ p: 4, borderRadius: "20px" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h4" fontWeight={700}>
+      <div className="max-w-[1000px] mx-auto mt-8">
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <Typography variant="h4" className="font-extrabold text-slate-800 leading-tight">
               {snippet.title}
             </Typography>
-            <Chip
-              label={snippet.language}
-              color="primary"
-              variant="outlined"
-              size="small"
-              sx={{ fontWeight: 600, textTransform: 'uppercase' }}
-            />
-          </Box>
+            <div className="flex items-center gap-2">
+              <span className="px-4 py-1.5 bg-blue-50 text-[#1a73e8] rounded-xl font-bold text-xs border border-blue-100 uppercase tracking-widest">
+                {snippet.language}
+              </span>
+            </div>
+          </div>
 
-          <CodeViewer code={snippet.code} language={snippet.language} />
+          <div className="rounded-2xl overflow-hidden border border-slate-100 mb-8 shadow-inner">
+            <CodeViewer code={snippet.code} language={snippet.language} />
+          </div>
 
-          <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap sx={{ mt: 3, mb: 1 }}>
-            {/* Code Actions */}
-            <Button
-              variant="contained"
-              startIcon={<ContentCopyIcon />}
-              onClick={copyCode}
-              sx={{ px: 3 }}
-            >
-              Copy Code
-            </Button>
-
-            <Button
-              variant="outlined"
-              startIcon={<FileDownloadIcon />}
-              onClick={() => {
-                const element = document.createElement("a");
-                const file = new Blob([snippet.code], { type: 'text/plain' });
-                element.href = URL.createObjectURL(file);
-                element.download = `${snippet.title}.${snippet.language === 'javascript' ? 'js' : snippet.language}`;
-                document.body.appendChild(element);
-                element.click();
-              }}
-            >
-              Download
-            </Button>
-
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, display: { xs: 'none', sm: 'block' } }} />
-
-            {/* Collaboration Actions */}
-            <Tooltip title="Copy public share link">
-              <Button variant="outlined" startIcon={<ShareIcon />} onClick={shareSnippet}>
-                Share
+          <div className="flex flex-wrap gap-3 pt-6 border-t border-slate-50">
+            {/* Primary Actions */}
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Button
+                variant="contained"
+                startIcon={<ContentCopyIcon />}
+                onClick={copyCode}
+                className="bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                Copy Code
               </Button>
-            </Tooltip>
 
-            <Button variant="outlined" startIcon={<CallSplitIcon />} onClick={handleFork}>
-              Fork
-            </Button>
+              <Button
+                variant="outlined"
+                startIcon={<FileDownloadIcon />}
+                onClick={() => {
+                  const element = document.createElement("a");
+                  const file = new Blob([snippet.code], { type: 'text/plain' });
+                  element.href = URL.createObjectURL(file);
+                  element.download = `${snippet.title}.${snippet.language === 'javascript' ? 'js' : snippet.language}`;
+                  document.body.appendChild(element);
+                  element.click();
+                }}
+                className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                Download
+              </Button>
+            </div>
 
-            <Button
-              variant="outlined"
-              startIcon={<GitHubIcon />}
-              onClick={async () => {
-                if (window.confirm("Export this snippet as a GitHub Gist?")) {
-                  try {
-                    const token = localStorage.getItem("token");
-                    const res = await fetch(`http://localhost:5000/api/github/export/${snippet._id}`, {
-                      method: "POST",
-                      headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const data = await res.json();
-                    if (res.ok) {
-                      toast.success(`Exported! Gist URL: ${data.html_url}`);
-                    } else {
-                      toast.error("Export failed: " + data.message);
+            <div className="hidden md:block w-px h-11 bg-slate-200 mx-1" />
+
+            {/* Sharing/Forking */}
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Tooltip title="Copy public share link">
+                <Button
+                  variant="outlined"
+                  startIcon={<ShareIcon />}
+                  onClick={shareSnippet}
+                  className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+                >
+                  Share
+                </Button>
+              </Tooltip>
+
+              <Button
+                variant="outlined"
+                startIcon={<CallSplitIcon />}
+                onClick={handleFork}
+                className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                Fork
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<GitHubIcon />}
+                onClick={async () => {
+                  if (window.confirm("Export this snippet as a GitHub Gist?")) {
+                    try {
+                      const token = localStorage.getItem("token");
+                      const res = await fetch(`http://localhost:5000/api/github/export/${snippet._id}`, {
+                        method: "POST",
+                        headers: { Authorization: `Bearer ${token}` }
+                      });
+                      const data = await res.json();
+                      if (res.ok) {
+                        toast.success(`Exported! Gist URL: ${data.html_url}`);
+                      } else {
+                        toast.error("Export failed: " + data.message);
+                      }
+                    } catch (e) {
+                      toast.error("Error exporting to Gist");
                     }
-                  } catch (e) {
-                    toast.error("Error exporting to Gist");
                   }
-                }
-              }}
-            >
-              Gist
-            </Button>
+                }}
+                className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                Gist
+              </Button>
+            </div>
 
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, display: { xs: 'none', sm: 'block' } }} />
+            <div className="hidden md:block w-px h-11 bg-slate-200 mx-1" />
 
             {/* Management Actions */}
-            <Button
-              variant="outlined"
-              startIcon={<EditIcon />}
-              onClick={() => navigate(`/dashboard/snippets/edit/${snippet._id}`)}
-            >
-              Edit
-            </Button>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Button
+                variant="outlined"
+                startIcon={<EditIcon />}
+                onClick={() => navigate(`/dashboard/snippets/edit/${snippet._id}`)}
+                className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                Edit
+              </Button>
 
-            <Button
-              variant="outlined"
-              startIcon={<HistoryIcon />}
-              onClick={() => navigate(`/dashboard/snippets/${snippet._id}/history`)}
-            >
-              History
-            </Button>
+              <Button
+                variant="outlined"
+                startIcon={<HistoryIcon />}
+                onClick={() => navigate(`/dashboard/snippets/${snippet._id}/history`)}
+                className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11"
+              >
+                History
+              </Button>
+            </div>
 
-            <Box sx={{ flexGrow: 1 }} />
+            <div className="flex-grow hidden md:block" />
 
             <Button
               variant="contained"
               color="error"
               startIcon={<DeleteIcon />}
               onClick={handleDelete}
-              sx={{
-                bgcolor: 'error.light',
-                '&:hover': { bgcolor: 'error.main' },
-                boxShadow: 'none'
-              }}
+              className="bg-red-50 text-red-600 hover:bg-red-100 shadow-none font-bold normal-case px-6 py-2.5 rounded-xl h-11 border border-red-100 w-full md:w-auto"
             >
               Delete
             </Button>
-          </Stack>
-        </Card>
+          </div>
+        </div>
         <CommentSection snippetId={snippet._id} />
 
-      </Box>
+      </div>
     </DashboardLayout>
   );
 }
-
-

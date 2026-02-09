@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
-  Box,
   Typography,
   TextField,
   Button,
-  Card,
-  CardContent,
   Collapse,
 } from "@mui/material";
 import { Reply as ReplyIcon } from "@mui/icons-material";
@@ -51,31 +48,26 @@ function CommentThread({
   };
 
   return (
-    <Box
-      sx={{
-        ml: depth * 3,
-        mt: 2,
-        borderLeft: depth > 0 ? "2px solid #e0e0e0" : "none",
-        pl: depth > 0 ? 2 : 0,
+    <div
+      style={{
+        marginLeft: depth > 0 ? `${depth * 24}px` : 0,
       }}
+      className={`mt-4 ${depth > 0 ? "border-l-2 border-[#e0e0e0] pl-4" : ""}`}
     >
-      <Card
-        variant="outlined"
-        sx={{
-          backgroundColor: depth % 2 === 0 ? "#fafafa" : "#ffffff",
-        }}
+      <div
+        className={`border border-slate-200 rounded-xl shadow-sm ${depth % 2 === 0 ? "bg-[#fafafa]" : "bg-white"}`}
       >
-        <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-            <Typography variant="subtitle2" fontWeight="bold" color="primary">
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-2">
+            <Typography variant="subtitle2" className="font-bold text-[#1a73e8]">
               {comment.author?.name || "Unknown User"}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {new Date(comment.createdAt).toLocaleString()}
             </Typography>
-          </Box>
+          </div>
 
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="body2" className="mb-2">
             {comment.text}
           </Typography>
 
@@ -83,13 +75,13 @@ function CommentThread({
             size="small"
             startIcon={<ReplyIcon />}
             onClick={() => setShowReplyForm(!showReplyForm)}
-            sx={{ textTransform: "none" }}
+            className="normal-case font-bold"
           >
             Reply
           </Button>
 
           <Collapse in={showReplyForm}>
-            <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
+            <div className="mt-4 flex gap-2">
               <TextField
                 fullWidth
                 size="small"
@@ -98,12 +90,14 @@ function CommentThread({
                 onChange={(e) => setReplyText(e.target.value)}
                 multiline
                 maxRows={3}
+                className="[&_.MuiOutlinedInput-root]:rounded-lg"
               />
               <Button
                 variant="contained"
                 size="small"
                 onClick={handleReply}
                 disabled={isSubmitting || !replyText.trim()}
+                className="bg-[#1a73e8] hover:bg-[#1557b0] shadow-none"
               >
                 Post
               </Button>
@@ -117,14 +111,14 @@ function CommentThread({
               >
                 Cancel
               </Button>
-            </Box>
+            </div>
           </Collapse>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
 
       {comment.replies && comment.replies.length > 0 && (
-        <Box>
+        <div>
           {comment.replies.map((reply) => (
             <CommentThread
               key={reply._id}
@@ -134,9 +128,9 @@ function CommentThread({
               onReplyAdded={onReplyAdded}
             />
           ))}
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }
 
@@ -175,12 +169,12 @@ export default function CommentSection({ snippetId }: { snippetId: string }) {
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h5" mb={2}>
+    <div className="mt-12">
+      <Typography variant="h5" className="mb-6 font-extrabold flex items-center gap-2">
         💬 Comments ({comments.length})
       </Typography>
 
-      <Box sx={{ display: "flex", gap: 1, mb: 4, alignItems: 'flex-start' }}>
+      <div className="flex gap-2 mb-8 items-start">
         <TextField
           fullWidth
           label="Write a comment..."
@@ -188,20 +182,20 @@ export default function CommentSection({ snippetId }: { snippetId: string }) {
           onChange={(e) => setText(e.target.value)}
           multiline
           maxRows={4}
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
+          className="[&_.MuiOutlinedInput-root]:rounded-2xl"
         />
         <Button
           variant="contained"
           onClick={handleAddComment}
           disabled={isLoading || !text.trim()}
-          sx={{ px: 3, py: 1.5, borderRadius: 3, fontWeight: 700, mt: 0.5 }}
+          className="px-6 py-3.5 bg-[#1a73e8] hover:bg-[#1557b0] shadow-none rounded-2xl font-bold mt-1"
         >
           Post
         </Button>
-      </Box>
+      </div>
 
       {comments.length === 0 ? (
-        <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
+        <Typography variant="body2" color="text.secondary" className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
           No comments yet. Be the first to comment!
         </Typography>
       ) : (
@@ -215,7 +209,6 @@ export default function CommentSection({ snippetId }: { snippetId: string }) {
           />
         ))
       )}
-    </Box>
+    </div>
   );
 }
-

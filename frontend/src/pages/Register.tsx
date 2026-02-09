@@ -1,14 +1,9 @@
 import {
-  Card,
   TextField,
   Button,
   Typography,
-  Stack,
-  Link,
-  Divider,
   Checkbox,
   FormControlLabel,
-  Box,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -51,12 +46,13 @@ export default function Register({
         password: data.password,
       });
 
-     
+
       navigate("/verify-otp", {
         state: { email: data.email },
       });
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Registration failed");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Registration failed");
     }
   };
 
@@ -65,109 +61,124 @@ export default function Register({
   };
 
   return (
-    <Card
-      sx={{
-     width: 420,
-    p: 4,
-    borderRadius: 3,
-    background: "linear-gradient(135deg, #ffffff 0%, #92a1b6 100%)",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <Typography variant="h6" mb={1.5}>
+    <div className="w-[420px] p-8 rounded-2xl bg-gradient-to-br from-white to-[#92a1b6] shadow-2xl border-none">
+      <Typography variant="h5" className="mb-8 font-extrabold text-slate-800">
         Create Account
       </Typography>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={1.8}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <div className="flex flex-col gap-5">
           <TextField
-            size="small"
             label="Full Name"
             {...register("name", { required: true })}
+            className="[&_.MuiOutlinedInput-root]:rounded-xl"
+            variant="outlined"
+            size="small"
           />
 
           <TextField
-            size="small"
             label="Email"
             type="email"
             {...register("email", { required: true })}
+            className="[&_.MuiOutlinedInput-root]:rounded-xl"
+            variant="outlined"
+            size="small"
           />
 
-          <Box sx={{ display: "flex", gap: 1.5 }}>
+          <div className="flex gap-4">
             <TextField
-              size="small"
               label="Phone"
               fullWidth
               {...register("phone", { required: true })}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
+              variant="outlined"
+              size="small"
             />
 
             <TextField
-              size="small"
               label="DOB"
               type="date"
               fullWidth
               InputLabelProps={{ shrink: true }}
               {...register("dob", { required: true })}
+              className="[&_.MuiOutlinedInput-root]:rounded-xl"
+              variant="outlined"
+              size="small"
             />
-          </Box>
+          </div>
 
           <TextField
-            size="small"
             label="Password"
             type="password"
             {...register("password", { required: true })}
+            className="[&_.MuiOutlinedInput-root]:rounded-xl"
+            variant="outlined"
+            size="small"
           />
 
           <TextField
-            size="small"
             label="Confirm Password"
             type="password"
             {...register("confirmPassword", { required: true })}
+            className="[&_.MuiOutlinedInput-root]:rounded-xl"
+            variant="outlined"
+            size="small"
           />
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                {...register("acceptTerms", { required: true })}
-              />
-            }
-            label={
-              <Typography variant="body2">
-                I agree to the Terms & Conditions
-              </Typography>
-            }
-          />
+          <div className="py-1">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  {...register("acceptTerms", { required: true })}
+                  className="text-[#1a73e8]"
+                />
+              }
+              label={
+                <Typography className="text-slate-600 text-xs font-semibold">
+                  I agree to the Terms & Conditions
+                </Typography>
+              }
+            />
+          </div>
 
           <Button
             type="submit"
             variant="contained"
-            sx={{ borderRadius: "12px" }}
+            fullWidth
+            className="rounded-xl py-3 bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold normal-case text-base"
           >
-            Register with Email
+            Create Account
           </Button>
 
-          <Divider>OR</Divider>
+          <div className="relative flex items-center py-2">
+            <div className="flex-grow border-t border-slate-200"></div>
+            <span className="flex-shrink mx-4 text-slate-400 text-[10px] font-bold uppercase tracking-wider">or</span>
+            <div className="flex-grow border-t border-slate-200"></div>
+          </div>
 
           <Button
             variant="outlined"
+            fullWidth
             startIcon={<GoogleIcon />}
             onClick={handleGoogleRegister}
-            sx={{ borderRadius: "12px", textTransform: "none", color: "blue" }}
+            className="rounded-xl py-3 border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case text-base"
           >
-            Register with Google
+            Sign up with Google
           </Button>
 
-          <Typography variant="body2" align="center">
+          <Typography className="text-slate-500 text-center text-sm mt-4 font-medium">
             Already have an account?{" "}
-            <Link component="button" onClick={switchToLogin}>
+            <button
+              type="button"
+              onClick={switchToLogin}
+              className="text-[#1a73e8] hover:text-[#1557b0] font-bold no-underline transition-colors bg-transparent border-none cursor-pointer"
+            >
               Login
-            </Link>
+            </button>
           </Typography>
-        </Stack>
+        </div>
       </form>
-    </Card>
+    </div>
   );
 }
-
-

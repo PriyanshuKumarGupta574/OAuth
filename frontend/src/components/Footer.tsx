@@ -1,86 +1,78 @@
-import { Box, Container, Grid, Typography, Link, IconButton, Stack, TextField, Button } from "@mui/material";
+import { Typography, Link, IconButton, TextField, Button } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 export default function Footer() {
   return (
-    <Box
-      sx={{
-        bgcolor: "#f8fafc",
-        borderTop: "1px solid #e2e8f0",
-        pt: 6,
-        pb: 3,
-        mt: "auto",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Typography variant="h6" fontWeight={700} color="primary" mb={2}>
+    <div className="bg-[#f8fafc] border-t border-[#e2e8f0] pt-12 pb-6 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <div className="md:col-span-4">
+            <Typography variant="h6" className="font-bold text-[#1a73e8] mb-4">
               SnippetManager
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
+            <Typography variant="body2" color="text.secondary" className="mb-4">
               The best place to store, organize, and share your code snippets with your team. Secure, fast, and collaborative.
             </Typography>
-            <Stack direction="row" spacing={1}>
+            <div className="flex flex-row gap-2">
               <IconButton size="small" color="primary"><GitHubIcon /></IconButton>
               <IconButton size="small" color="primary"><TwitterIcon /></IconButton>
               <IconButton size="small" color="primary"><LinkedInIcon /></IconButton>
-            </Stack>
-          </Grid>
+            </div>
+          </div>
 
-          <Grid size={{ xs: 6, md: 2 }}>
-            <Typography variant="subtitle2" fontWeight={700} mb={2}>
+          <div className="col-span-1 xs:col-span-6 md:col-span-2">
+            <Typography variant="subtitle2" className="font-bold mb-4">
               Product
             </Typography>
-            <Stack spacing={1}>
+            <div className="flex flex-col gap-2">
               <Link href="#" color="text.secondary" underline="hover">Features</Link>
               <Link href="#" color="text.secondary" underline="hover">Teams</Link>
               <Link href="#" color="text.secondary" underline="hover">Integrations</Link>
               <Link href="#" color="text.secondary" underline="hover">Pricing</Link>
-            </Stack>
-          </Grid>
+            </div>
+          </div>
 
-          <Grid size={{ xs: 6, md: 2 }}>
-            <Typography variant="subtitle2" fontWeight={700} mb={2}>
+          <div className="col-span-1 xs:col-span-6 md:col-span-2">
+            <Typography variant="subtitle2" className="font-bold mb-4">
               Resources
             </Typography>
-            <Stack spacing={1}>
+            <div className="flex flex-col gap-2">
               <Link href="#" color="text.secondary" underline="hover">Documentation</Link>
               <Link href="#" color="text.secondary" underline="hover">API Reference</Link>
               <Link href="#" color="text.secondary" underline="hover">Community</Link>
               <Link href="#" color="text.secondary" underline="hover">Blog</Link>
-            </Stack>
-          </Grid>
+            </div>
+          </div>
 
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Typography variant="subtitle2" fontWeight={700} mb={2}>
+          <div className="md:col-span-4">
+            <Typography variant="subtitle2" className="font-bold mb-4">
               Stay up to date
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
+            <Typography variant="body2" color="text.secondary" className="mb-4">
               Subscribe to our newsletter for the latest updates.
             </Typography>
-            <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', gap: 1 }}>
+            <form noValidate autoComplete="off" className="flex gap-2">
               <TextField
                 size="small"
                 placeholder="Enter your email"
                 fullWidth
-                sx={{ bgcolor: 'white' }}
+                className="bg-white"
               />
-              <Button variant="contained" disableElevation>
+              <Button variant="contained" className="shadow-none bg-[#1a73e8] hover:bg-[#1557b0]">
                 Subscribe
               </Button>
-            </Box>
-          </Grid>
-        </Grid>
+            </form>
+          </div>
+        </div>
 
-        <Box sx={{ borderTop: "1px solid #e2e8f0", mt: 6, pt: 3, textAlign: "center" }}>
+        <div className="border-t border-[#e2e8f0] mt-12 pt-6 text-center">
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} SnippetManager. All rights reserved. Made with.
+            © {new Date().getFullYear()} SnippetManager. All rights reserved. Made with love.
           </Typography>
-        </Box>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }

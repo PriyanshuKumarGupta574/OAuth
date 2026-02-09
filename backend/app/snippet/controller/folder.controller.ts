@@ -2,14 +2,13 @@ import { Request, Response } from "express";
 import Folder from "../schema/folder.schema";
 import Snippet from "../schema/snippet.schema";
 
-
 export const createFolder = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
 
     const folder = await Folder.create({
       name,
-      user: (req as any).user._id,
+      user: req.user!._id,
     });
 
     res.status(201).json(folder);
@@ -18,7 +17,7 @@ export const createFolder = async (req: Request, res: Response) => {
   }
 };
 
-export const moveSnippetToFolder = async  (req: Request, res: Response) => {
+export const moveSnippetToFolder = async (req: Request, res: Response) => {
   const { snippetId, folderId } = req.body;
 
   const snippet = await Snippet.findByIdAndUpdate(
@@ -41,7 +40,7 @@ export const deleteFolder = async (req: Request, res: Response) => {
     }
 
     // security — only owner can delete
-    if (folder.user.toString() !== (req as any).user._id) {
+    if (folder.user.toString() !== req.user!._id) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
@@ -53,42 +52,10 @@ export const deleteFolder = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getFolders = async (req: Request, res: Response) => {
   const folders = await Folder.find({
-    user: (req as any).user._id,
+    user: req.user!._id,
   });
 
   res.json(folders);
 };
-
-
-// import { Request, Response } from "express";
-// import Folder from "../schema/folder.schema";
-
-// // create folder
-// export const createFolder = async (req: Request, res: Response) => {
-//   try {
-//     const folder = await Folder.create({
-//       name: req.body.name,
-//       user: (req as any).user._id,
-//     });
-
-//     res.status(201).json(folder);
-//   } catch (err: any) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
-// // get user folders
-// export const getFolders = async (req: Request, res: Response) => {
-//   try {
-//     const folders = await Folder.find({
-//       user: (req as any).user._id,
-//     }).sort({ createdAt: -1 });
-
-//     res.json(folders);
-//   } catch (err: any) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };

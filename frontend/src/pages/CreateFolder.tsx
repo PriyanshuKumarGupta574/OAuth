@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Card, Typography, TextField, Button, Stack } from "@mui/material";
+import { Typography, TextField, Button } from "@mui/material";
 import { toast } from "react-toastify";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -28,37 +28,49 @@ export default function CreateFolder() {
 
   return (
     <DashboardLayout>
-      <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-        <Card sx={{ p: 4 }}>
-          <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-            <CreateNewFolderIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h5" fontWeight={700}>
-              Create New Folder
-            </Typography>
-          </Stack>
+      <div className="max-w-[600px] mx-auto mt-12 p-8 bg-white rounded-3xl border border-slate-200 shadow-xl">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3 bg-blue-50 rounded-2xl text-[#1a73e8]">
+            <CreateNewFolderIcon className="text-3xl" />
+          </div>
+          <Typography variant="h5" className="font-extrabold text-slate-800">
+            Create New Folder
+          </Typography>
+        </div>
 
+        <div className="space-y-8">
           <TextField
             label="Folder name"
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
-            sx={{ mb: 3 }}
+            placeholder="e.g. Project Assets, Learning"
+            className="[&_.MuiOutlinedInput-root]:rounded-xl"
+            autoFocus
           />
 
-          <Button
-            variant="contained"
-            fullWidth
-            size="large"
-            startIcon={<CreateNewFolderIcon />}
-            onClick={handleCreate}
-            sx={{ borderRadius: "10px", py: 1.5, fontWeight: 700 }}
-          >
-            Create Folder
-          </Button>
-        </Card>
-      </Box>
+          <div className="flex gap-4">
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              startIcon={<CreateNewFolderIcon />}
+              onClick={handleCreate}
+              className="bg-[#1a73e8] hover:bg-[#1557b0] shadow-none font-bold normal-case py-4 rounded-xl text-lg flex-1"
+            >
+              Create Folder
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={() => navigate("/dashboard/snippets")}
+              className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case py-4 rounded-xl text-lg flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }
-
-

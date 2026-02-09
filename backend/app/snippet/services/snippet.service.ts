@@ -1,11 +1,20 @@
 import Snippet, { ISnippet } from "../schema/snippet.schema";
 import SnippetVersion from "../schema/snippetVersion.schema";
+import Team, { ITeam } from "../../team/schema/team.schema";
+import mongoose from "mongoose";
 
+export interface CreateSnippetData {
+  title: string;
+  code: string;
+  language: string;
+  tags?: string[];
+  visibility?: "public" | "private" | "team";
+  folder?: string | null;
+  team?: string | null;
+  author: string;
+}
 
-import Team from "../../team/schema/team.schema";
-
-export const createSnippetService = async (data: any) => {
-  // If creating for a team, verify membership
+export const createSnippetService = async (data: CreateSnippetData) => {
   if (data.team) {
     const team = await Team.findById(data.team);
     if (!team) throw new Error("Team not found");
@@ -18,14 +27,22 @@ export const createSnippetService = async (data: any) => {
       throw new Error("User is not a member of this team");
     }
 
-    // Enforce team visibility? Or allow "private" team snippets? 
-    // For now, let user decide, but maybe default to "team" visibility?
     if (!data.visibility) data.visibility = "team";
   }
 
-  return await Snippet.create(data);
-};
+  const snippetData: Partial<ISnippet> = {
+    ...data,
+    author: new mongoose.Types.ObjectId(data.author),
+  };
 
+  if (data.team) snippetData.team = new mongoose.Types.ObjectId(data.team);
+  else delete snippetData.team;
+
+  if (data.folder) snippetData.folder = new mongoose.Types.ObjectId(data.folder);
+  else delete snippetData.folder;
+
+  return await Snippet.create(snippetData);
+};
 
 export const getAllSnippetsService = async (
   userId?: string,
@@ -39,15 +56,15 @@ export const getAllSnippetsService = async (
   page: number = 1,
   limit: number = 6
 ) => {
-  const query: any = {};
+  const query: mongoose.FilterQuery<ISnippet> = {};
 
   if (teamId) {
-    query.team = teamId;
+    query.team = new mongoose.Types.ObjectId(teamId);
     if (!userId) throw new Error("Authentication required for team snippets");
   } else {
     query.team = null;
     if (userId) {
-      query.$or = [{ visibility: "public" }, { author: userId }];
+      query.$or = [{ visibility: "public" }, { author: new mongoose.Types.ObjectId(userId) }];
     } else {
       query.visibility = "public";
     }
@@ -57,19 +74,18 @@ export const getAllSnippetsService = async (
   if (language) query.language = language;
 
   if (author) {
-    query.author = author;
+    query.author = new mongoose.Types.ObjectId(author);
   }
 
   if (startDate || endDate) {
-    query.createdAt = {};
-    if (startDate) query.createdAt.$gte = new Date(startDate);
-    if (endDate) query.createdAt.$lte = new Date(endDate);
+    const dateQuery: { $gte?: Date; $lte?: Date } = {};
+    if (startDate) dateQuery.$gte = new Date(startDate);
+    if (endDate) dateQuery.$lte = new Date(endDate);
+    query.createdAt = dateQuery;
   }
 
   if (search) {
     const searchRegex = { $regex: search, $options: "i" };
-    // We need to be careful not to overwrite the existing $or for visibility
-    // So we use $and to combine visibility check with search check
     const searchCondition = {
       $or: [
         { title: searchRegex },
@@ -108,7 +124,6 @@ export const getAllSnippetsService = async (
   };
 };
 
-
 export const getSnippetByIdService = async (
   id: string,
   userId?: string
@@ -121,31 +136,18 @@ export const getSnippetByIdService = async (
     throw new Error("Snippet not found");
   }
 
-  // If snippet belongs to a team, check if user is a member
   if (snippet.team) {
     if (!userId) throw new Error("Unauthorized");
-    // Just simple check if user is in team members
-    // We need to fetch team members or trust query?
-    // Let's rely on the populated team object if it has members
-    // But schema ref might not fully populate members depending on Team schema def in snippet service? 
-    // Wait, Snippet schema ref "Team".
-    // We need to check if userId is in (snippet.team as any).members or owner
-
-    // NOTE: This relies on full population which might be heavy. 
-    // Alternatively, just return it and let frontend handle? No, security.
-
-    // Better: use Team model to check membership
-    // avoiding circular dependency might be tricky if not careful? 
-    // Actually simpler: 
-    const isOwner = (snippet.team as any).owner.toString() === userId;
-    const isMember = (snippet.team as any).members.some((m: any) => m.user.toString() === userId);
+    // Team is populated, so snippet.team is ITeam
+    const team = snippet.team as unknown as ITeam;
+    const isOwner = team.owner.toString() === userId;
+    const isMember = team.members.some((m) => m.user.toString() === userId);
 
     if (!isOwner && !isMember && snippet.visibility !== "public") {
       throw new Error("Unauthorized access to team snippet");
     }
 
   } else {
-    // Personal snippet logic
     if (
       snippet.visibility === "private" &&
       snippet.author._id.toString() !== userId
@@ -157,11 +159,10 @@ export const getSnippetByIdService = async (
   return snippet;
 };
 
-
 export const updateSnippetService = async (
   id: string,
   userId: string,
-  data: any
+  data: Partial<CreateSnippetData>
 ) => {
   const snippet = (await Snippet.findById(id)) as ISnippet;
 
@@ -169,7 +170,6 @@ export const updateSnippetService = async (
 
   if (snippet.author.toString() !== userId)
     throw new Error("Unauthorized");
-
 
   await SnippetVersion.create({
     snippet: snippet._id,
@@ -184,28 +184,24 @@ export const updateSnippetService = async (
   return await Snippet.findByIdAndUpdate(id, data, { new: true });
 };
 
-
 export const getSnippetsByFolderService = async (
   folderId: string,
   userId: string
 ) => {
   return await Snippet.find({
-    folder: folderId,
-    $or: [{ visibility: "public" }, { author: userId }],
+    folder: new mongoose.Types.ObjectId(folderId),
+    $or: [{ visibility: "public" }, { author: new mongoose.Types.ObjectId(userId) }],
   })
     .populate("author", "name email")
     .sort({ createdAt: -1 });
 };
-
 
 export const forkSnippetService = async (
   snippetId: string,
   userId: string
 ) => {
   const original = await Snippet.findById(snippetId);
-
   if (!original) throw new Error("Snippet not found");
-
 
   const forkTitle = original.title.includes("(fork)")
     ? original.title
@@ -217,20 +213,16 @@ export const forkSnippetService = async (
     language: original.language,
     tags: original.tags,
     visibility: "private",
-    author: userId,
+    author: new mongoose.Types.ObjectId(userId),
   });
 };
-
 
 export const deleteSnippetService = async (
   id: string,
   userId?: string
 ) => {
   const snippet = await Snippet.findById(id);
-
-  if (!snippet) {
-    throw new Error("Snippet not found");
-  }
+  if (!snippet) throw new Error("Snippet not found");
 
   if (snippet.author.toString() !== userId) {
     throw new Error("Unauthorized");
@@ -238,16 +230,3 @@ export const deleteSnippetService = async (
 
   return await Snippet.findByIdAndDelete(id);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-

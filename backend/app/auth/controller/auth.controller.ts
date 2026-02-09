@@ -20,8 +20,6 @@ import {
   generateRefreshToken,
 } from "../../common/services/jwt.service";
 
-
-
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -85,8 +83,6 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
   res.json({ accessToken });
 };
 
-
-
 export const resendOtp = async (req: Request, res: Response) => {
   const { email } = req.body;
 
@@ -105,13 +101,10 @@ export const resendOtp = async (req: Request, res: Response) => {
   res.json({ message: "OTP resent successfully" });
 };
 
-
-
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("+password");
-
 
   if (!user)
     return res.status(400).json({ message: "Invalid credentials" });
@@ -144,8 +137,6 @@ export const login = async (req: Request, res: Response) => {
 export const refreshToken = async (req: Request, res: Response) => {
   const token = req.cookies?.refreshToken;
 
-  console.log("Refresh token:", token);
-
   if (!token) {
     return res.status(401).json({ message: "No refresh token" });
   }
@@ -154,7 +145,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     const payload = jwt.verify(
       token,
       process.env.JWT_REFRESH_SECRET!
-    ) as any;
+    ) as { id: string };
 
     const accessToken = generateAccessToken({ id: payload.id });
 
@@ -164,13 +155,10 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const logout = async (_: Request, res: Response) => {
   res.clearCookie("refreshToken");
   res.json({ message: "Logged out" });
 };
-
 
 export const forgotPassword = async (req: Request, res: Response) => {
   await forgotPasswordService(req.body.email);
@@ -178,10 +166,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
-  await resetPasswordService(req.params.token as string , req.body.password);
+  await resetPasswordService(req.params.token as string, req.body.password);
   res.json({ message: "Password reset successful" });
 };
-
-
-
-

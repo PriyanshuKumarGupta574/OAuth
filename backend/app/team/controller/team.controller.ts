@@ -12,25 +12,26 @@ import User from "../../auth/schemas/user.schema";
 export const createTeam = async (req: Request, res: Response) => {
     try {
         const { name, description } = req.body;
-        const userId = (req as any).user._id;
+        const userId = req.user!._id;
 
         if (!name) {
             return res.status(400).json({ message: "Team name is required" });
         }
 
-        const team = await createTeamService(userId, name, description);
+        const team = await createTeamService(userId.toString(), name, description);
         res.status(201).json(team);
-    } catch (error: any) {
-        res.status(500).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
 };
 
 export const getMyTeams = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        const teams = await getTeamsForUserService(userId);
+        const userId = req.user!._id;
+        const teams = await getTeamsForUserService(userId.toString());
         res.json(teams);
-    } catch (error: any) {
+    } catch (error: unknown) {
         res.status(500).json({ message: "Failed to fetch teams" });
     }
 };
@@ -38,11 +39,12 @@ export const getMyTeams = async (req: Request, res: Response) => {
 export const getTeamById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params as { id: string };
-        const userId = (req as any).user._id;
-        const team = await getTeamByIdService(id, userId);
+        const userId = req.user!._id;
+        const team = await getTeamByIdService(id, userId.toString());
         res.json(team);
-    } catch (error: any) {
-        res.status(403).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(403).json({ message: err.message });
     }
 };
 
@@ -50,43 +52,44 @@ export const addMember = async (req: Request, res: Response) => {
     try {
         const { id } = req.params as { id: string };
         const { email, role } = req.body;
-        const requesterId = (req as any).user._id;
-
+        const requesterId = req.user!._id;
 
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "User not found with this email" });
         }
 
-        const team = await addMemberService(id, requesterId, user._id.toString(), role || "viewer");
+        const team = await addMemberService(id, requesterId.toString(), user._id.toString(), role || "viewer");
         res.json(team);
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(400).json({ message: err.message });
     }
 };
 
 export const removeMember = async (req: Request, res: Response) => {
     try {
         const { id, memberId } = req.params as { id: string; memberId: string };
-        const requesterId = (req as any).user._id;
+        const requesterId = req.user!._id;
 
-        const team = await removeMemberService(id, requesterId, memberId);
+        const team = await removeMemberService(id, requesterId.toString(), memberId);
         res.json(team);
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(400).json({ message: err.message });
     }
 };
 
 export const leaveTeam = async (req: Request, res: Response) => {
     try {
         const { id } = req.params as { id: string };
-        const requesterId = (req as any).user._id;
+        const requesterId = req.user!._id;
 
-
-        const team = await removeMemberService(id, requesterId, requesterId);
+        await removeMemberService(id, requesterId.toString(), requesterId.toString());
         res.json({ message: "Left team successfully" });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(400).json({ message: err.message });
     }
 };
 
@@ -94,11 +97,12 @@ export const updateMemberRole = async (req: Request, res: Response) => {
     try {
         const { id, memberId } = req.params as { id: string; memberId: string };
         const { role } = req.body;
-        const requesterId = (req as any).user._id;
+        const requesterId = req.user!._id;
 
-        const team = await updateMemberRoleService(id, requesterId, memberId, role);
+        const team = await updateMemberRoleService(id, requesterId.toString(), memberId, role);
         res.json(team);
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        const err = error as Error;
+        res.status(400).json({ message: err.message });
     }
 };

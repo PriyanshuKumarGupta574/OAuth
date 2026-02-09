@@ -18,8 +18,9 @@ export const trackView = async (req: Request, res: Response) => {
         }
 
         res.json({ message: "View tracked", views: snippet.views });
-    } catch (error) {
-        console.error("Track view error:", error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Track view error:", err.message);
         res.status(500).json({ message: "Failed to track view" });
     }
 };
@@ -33,8 +34,9 @@ export const getTrendingSnippets = async (req: Request, res: Response) => {
         const snippets = await getTrendingSnippetsService(limit);
 
         res.json(snippets);
-    } catch (error) {
-        console.error("Get trending snippets error:", error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Get trending snippets error:", err.message);
         res.status(500).json({ message: "Failed to get trending snippets" });
     }
 };
@@ -44,12 +46,13 @@ export const getTrendingSnippets = async (req: Request, res: Response) => {
  */
 export const getUserAnalytics = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        const analytics = await getUserAnalyticsService(userId);
+        const userId = req.user!._id;
+        const analytics = await getUserAnalyticsService(userId as string);
 
         res.json(analytics);
-    } catch (error) {
-        console.error("Get user analytics error:", error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Get user analytics error:", err.message);
         res.status(500).json({ message: "Failed to get analytics" });
     }
 };

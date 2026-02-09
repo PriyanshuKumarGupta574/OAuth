@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    Box,
-    Card,
     Typography,
-    Grid,
     CircularProgress,
 } from "@mui/material";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -44,9 +41,9 @@ export default function AnalyticsDashboard() {
     if (loading) {
         return (
             <DashboardLayout>
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+                <div className="flex justify-center mt-20">
                     <CircularProgress />
-                </Box>
+                </div>
             </DashboardLayout>
         );
     }
@@ -54,9 +51,11 @@ export default function AnalyticsDashboard() {
     if (!analytics) {
         return (
             <DashboardLayout>
-                <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4, p: 3 }}>
-                    <Typography color="error">Failed to load analytics</Typography>
-                </Box>
+                <div className="max-w-[1200px] mx-auto mt-10 p-6">
+                    <Typography className="text-red-500 font-bold text-center py-20 bg-red-50 rounded-2xl border border-red-100">
+                        Failed to load analytics
+                    </Typography>
+                </div>
             </DashboardLayout>
         );
     }
@@ -65,116 +64,104 @@ export default function AnalyticsDashboard() {
         {
             title: "Total Snippets",
             value: analytics.totalSnippets,
-            icon: <CodeIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-            color: "#1976d2",
+            icon: <CodeIcon className="text-4xl text-[#1a73e8]" />,
+            gradient: "from-blue-50 to-white",
+            border: "border-blue-100",
         },
         {
             title: "Total Views",
             value: analytics.totalViews,
-            icon: <VisibilityIcon sx={{ fontSize: 40, color: "success.main" }} />,
-            color: "#2e7d32",
+            icon: <VisibilityIcon className="text-4xl text-emerald-500" />,
+            gradient: "from-emerald-50 to-white",
+            border: "border-emerald-100",
         },
         {
             title: "Total Forks",
             value: analytics.totalForks,
-            icon: <ForkRightIcon sx={{ fontSize: 40, color: "warning.main" }} />,
-            color: "#ed6c02",
+            icon: <ForkRightIcon className="text-4xl text-amber-500" />,
+            gradient: "from-amber-50 to-white",
+            border: "border-amber-100",
         },
         {
             title: "Total Comments",
             value: analytics.totalComments,
-            icon: <CommentIcon sx={{ fontSize: 40, color: "info.main" }} />,
-            color: "#0288d1",
+            icon: <CommentIcon className="text-4xl text-cyan-500" />,
+            gradient: "from-cyan-50 to-white",
+            border: "border-cyan-100",
         },
     ];
 
     return (
         <DashboardLayout>
-            <Box sx={{ maxWidth: 1200, mx: "auto", mt: 4, p: 3 }}>
-                <Typography variant="h4" fontWeight="bold" mb={4}>
-                    📊 Your Analytics Dashboard
+            <div className="max-w-[1200px] mx-auto mt-8 p-6">
+                <Typography variant="h4" className="font-extrabold text-slate-800 mb-10">
+                    Your Analytics Dashboard
                 </Typography>
 
                 {/* Stats Grid */}
-                <Grid container spacing={3} mb={4}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
                     {statCards.map((stat) => (
-                        <Grid item xs={12} sm={6} md={3} key={stat.title}>
-                            <Card
-                                sx={{
-                                    p: 3,
-                                    textAlign: "center",
-                                    transition: "all 0.3s",
-                                    "&:hover": {
-                                        transform: "translateY(-4px)",
-                                        boxShadow: 6,
-                                    },
-                                }}
-                            >
+                        <div
+                            key={stat.title}
+                            className={`p-8 rounded-3xl bg-gradient-to-br ${stat.gradient} border ${stat.border} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center flex flex-col items-center group`}
+                        >
+                            <div className="mb-4 p-4 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform">
                                 {stat.icon}
-                                <Typography variant="h4" fontWeight="bold" mt={2}>
-                                    {stat.value}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" mt={1}>
-                                    {stat.title}
-                                </Typography>
-                            </Card>
-                        </Grid>
+                            </div>
+                            <Typography variant="h3" className="font-extrabold text-slate-800 tracking-tight">
+                                {stat.value}
+                            </Typography>
+                            <Typography variant="body2" className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">
+                                {stat.title}
+                            </Typography>
+                        </div>
                     ))}
-                </Grid>
+                </div>
 
                 {/* Most Viewed Snippet */}
                 {analytics.mostViewed && (
-                    <Card sx={{ p: 4 }}>
-                        <Typography variant="h5" fontWeight="bold" mb={3}>
+                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
+
+                        <Typography variant="h5" className="font-extrabold text-slate-800 mb-8 flex items-center gap-2">
                             🏆 Most Viewed Snippet
                         </Typography>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                flexWrap: "wrap",
-                                gap: 2,
-                            }}
-                        >
-                            <Box>
-                                <Typography variant="h6">{analytics.mostViewed.title}</Typography>
-                                <Typography variant="body2" color="text.secondary" mt={1}>
-                                    This snippet has been viewed the most
+
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                            <div>
+                                <Typography variant="h5" className="font-bold text-slate-800 group-hover:text-[#1a73e8] transition-colors">
+                                    {analytics.mostViewed.title}
                                 </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 1,
-                                    bgcolor: "primary.light",
-                                    px: 3,
-                                    py: 2,
-                                    borderRadius: 2,
-                                }}
-                            >
-                                <VisibilityIcon />
-                                <Typography variant="h5" fontWeight="bold">
-                                    {analytics.mostViewed.views}
+                                <Typography variant="body1" className="text-slate-500 mt-2">
+                                    This snippet is gaining the most attention from your audience.
                                 </Typography>
-                                <Typography variant="body2">views</Typography>
-                            </Box>
-                        </Box>
-                    </Card>
+                            </div>
+                            <div className="flex items-center gap-4 bg-blue-50 text-[#1a73e8] px-8 py-5 rounded-2xl border border-blue-100 shadow-inner">
+                                <VisibilityIcon className="text-2xl" />
+                                <div className="flex flex-col">
+                                    <span className="text-3xl font-extrabold leading-tight">
+                                        {analytics.mostViewed.views}
+                                    </span>
+                                    <span className="text-xs font-bold uppercase tracking-wider opacity-70">
+                                        views
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 )}
 
                 {analytics.totalSnippets === 0 && (
-                    <Card sx={{ p: 4, textAlign: "center" }}>
-                        <Typography variant="h6" color="text.secondary">
+                    <div className="bg-slate-50 p-12 rounded-3xl border border-dashed border-slate-300 text-center">
+                        <Typography variant="h6" className="text-slate-800 font-bold mb-2">
                             You haven't created any snippets yet.
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" mt={1}>
-                            Start creating snippets to see your analytics!
+                        <Typography className="text-slate-500">
+                            Start creating snippets to see your analytics dashboard come to life!
                         </Typography>
-                    </Card>
+                    </div>
                 )}
-            </Box>
+            </div>
         </DashboardLayout>
     );
 }

@@ -1,4 +1,4 @@
-import Snippet from "../schema/snippet.schema";
+import Snippet, { ISnippet } from "../schema/snippet.schema";
 
 /**
  * Track a view for a snippet
@@ -25,7 +25,7 @@ export const trackViewService = async (snippetId: string) => {
  * Calculate trending score for a snippet
  * Formula: (views * 0.5 + forks * 2 + commentCount * 1.5) / daysSinceCreation
  */
-export const calculateTrendingScore = (snippet: any): number => {
+export const calculateTrendingScore = (snippet: ISnippet): number => {
     const now = Date.now();
     const createdAt = new Date(snippet.createdAt).getTime();
     const daysSinceCreation = Math.max(
@@ -121,6 +121,7 @@ export const incrementForkCountService = async (snippetId: string) => {
  * Update comment count
  */
 export const updateCommentCountService = async (snippetId: string) => {
+    // Dynamically require to avoid circular dependency
     const Comment = require("../schema/comment.schema").default;
     const count = await Comment.countDocuments({ snippet: snippetId });
 

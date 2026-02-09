@@ -11,7 +11,7 @@ export const createComment = async (req: Request, res: Response) => {
   try {
     const snippetId = req.params.id as string;
     const { text, parentCommentId } = req.body;
-    const userId = (req as any).user._id;
+    const userId = req.user!._id;
 
     if (!text || !text.trim()) {
       return res.status(400).json({ message: "Comment text is required" });
@@ -34,7 +34,7 @@ export const createComment = async (req: Request, res: Response) => {
 
     const comment = await createCommentService(
       snippetId,
-      userId,
+      userId as string,
       text,
       parentCommentId
     );
@@ -43,8 +43,9 @@ export const createComment = async (req: Request, res: Response) => {
     await updateCommentCountService(snippetId);
 
     res.status(201).json(comment);
-  } catch (error) {
-    console.error("Create comment error:", error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Create comment error:", err.message);
     res.status(500).json({ message: "Failed to create comment" });
   }
 };
@@ -56,10 +57,9 @@ export const getCommentsBySnippet = async (req: Request, res: Response) => {
 
     const comments = await getCommentsBySnippetService(snippetId);
     res.json(comments);
-  } catch (error) {
-    console.error("Fetch comments error:", error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Fetch comments error:", err.message);
     res.status(500).json({ message: "Failed to fetch comments" });
   }
 };
-
-

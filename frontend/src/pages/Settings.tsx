@@ -1,13 +1,6 @@
 import {
-    Box,
     Typography,
-    Card,
     Switch,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemSecondaryAction,
-    Divider,
     Button,
 } from "@mui/material";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -19,95 +12,113 @@ import DeleteIcon from "@mui/icons-material/Delete";
 export default function Settings() {
     return (
         <DashboardLayout>
-            <Box sx={{ maxWidth: 800, mx: "auto", mt: 4, p: 2 }}>
-                <Typography variant="h4" fontWeight={700} mb={4}>
+            <div className="max-w-[800px] mx-auto mt-10 p-4 pb-20">
+                <Typography variant="h4" className="font-extrabold text-slate-800 mb-10">
                     Settings
                 </Typography>
 
-                <Card sx={{ mb: 4 }}>
-                    <Box p={3}>
-                        <Typography variant="h6" fontWeight={600} gutterBottom>
+                {/* Appearance section */}
+                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+                    <div className="p-8 border-b border-slate-50">
+                        <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
                             Appearance
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={2}>
+                        <Typography className="text-slate-500 text-sm font-medium">
                             Customize how the application looks on your device.
                         </Typography>
-                    </Box>
-                    <Divider />
-                    <List>
-                        <ListItem>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                <DarkModeIcon color="action" />
-                                <ListItemText
-                                    primary="Dark Mode"
-                                    secondary="Switch between light and dark themes"
-                                />
-                            </Box>
-                            <ListItemSecondaryAction>
-                                <Switch edge="end" />
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    </List>
-                </Card>
+                    </div>
+                    <div className="p-8">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-slate-50 rounded-2xl text-slate-400">
+                                    <DarkModeIcon />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <div className="text-slate-700 font-bold">Dark Mode</div>
+                                    <div className="text-slate-400 text-xs font-medium leading-relaxed max-w-[240px]">
+                                        Switch between light and dark themes for better comfort.
+                                    </div>
+                                </div>
+                            </div>
+                            <Switch color="primary" />
+                        </div>
+                    </div>
+                </div>
 
-                <Card sx={{ mb: 4 }}>
-                    <Box p={3}>
-                        <Typography variant="h6" fontWeight={600} gutterBottom>
+                {/* Notifications section */}
+                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+                    <div className="p-8 border-b border-slate-50">
+                        <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
                             Notifications
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={2}>
+                        <Typography className="text-slate-500 text-sm font-medium">
                             Manage your email and push notification preferences.
                         </Typography>
-                    </Box>
-                    <Divider />
-                    <List>
-                        <ListItem>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                <NotificationsIcon color="action" />
-                                <ListItemText
-                                    primary="Email Notifications"
-                                    secondary="Receive emails about activity on your snippets"
-                                />
-                            </Box>
-                            <ListItemSecondaryAction>
-                                <Switch edge="end" defaultChecked />
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    </List>
-                </Card>
+                    </div>
+                    <div className="p-8">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-blue-50 rounded-2xl text-[#1a73e8]">
+                                    <NotificationsIcon />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <div className="text-slate-700 font-bold">Email Notifications</div>
+                                    <div className="text-slate-400 text-xs font-medium leading-relaxed max-w-[240px]">
+                                        Receive emails about activity on your snippets and teams.
+                                    </div>
+                                </div>
+                            </div>
+                            <Switch color="primary" defaultChecked />
+                        </div>
+                    </div>
+                </div>
 
-                <Card sx={{ mb: 4 }}>
-                    <Box p={3}>
-                        <Typography variant="h6" fontWeight={600} gutterBottom>
+                {/* Security section */}
+                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+                    <div className="p-8 border-b border-slate-50">
+                        <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
                             Security
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={2}>
+                        <Typography className="text-slate-500 text-sm font-medium">
                             Update your password and secure your account.
                         </Typography>
-                    </Box>
-                    <Divider />
-                    <Box p={3}>
-                        <Button variant="outlined" startIcon={<LockIcon />}>
+                    </div>
+                    <div className="p-8">
+                        <Button
+                            variant="outlined"
+                            startIcon={<LockIcon />}
+                            className="border-slate-200 text-slate-600 hover:bg-slate-50 shadow-none font-bold normal-case px-8 py-3 rounded-xl"
+                        >
                             Change Password
                         </Button>
-                    </Box>
-                </Card>
+                    </div>
+                </div>
 
-                <Card sx={{ borderColor: 'error.main', borderWidth: 1, borderStyle: 'solid' }}>
-                    <Box p={3}>
-                        <Typography variant="h6" fontWeight={600} gutterBottom color="error">
+                {/* Danger Zone */}
+                <div className="bg-white rounded-3xl border-2 border-red-100 shadow-sm overflow-hidden">
+                    <div className="p-8 bg-red-50/30 border-b border-red-50">
+                        <Typography variant="h6" className="font-extrabold text-red-600 mb-1">
                             Danger Zone
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={3}>
-                            Once you delete your account, there is no going back. Please be certain.
+                        <Typography className="text-slate-500 text-sm font-medium">
+                            Irreversible actions for your account.
                         </Typography>
-                        <Button variant="contained" color="error" startIcon={<DeleteIcon />}>
+                    </div>
+                    <div className="p-8">
+                        <Typography className="text-slate-600 text-sm mb-6 font-medium leading-relaxed max-w-[400px]">
+                            Once you delete your account, all your snippets, folders, and team data will be permanently removed. There is no going back.
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            startIcon={<DeleteIcon />}
+                            className="bg-red-500 hover:bg-red-600 shadow-none font-bold normal-case px-8 py-3 rounded-xl"
+                        >
                             Delete Account
                         </Button>
-                    </Box>
-                </Card>
-
-            </Box>
+                    </div>
+                </div>
+            </div>
         </DashboardLayout>
     );
 }

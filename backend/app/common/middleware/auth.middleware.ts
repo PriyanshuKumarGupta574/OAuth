@@ -22,8 +22,9 @@ export const authMiddleware = (
       process.env.JWT_ACCESS_SECRET!
     ) as JwtPayload;
 
-    (req as any).user = {
+    req.user = {
       _id: decoded.id,
+      email: "", // email will be filled if needed or fetched from DB
     };
 
     next();

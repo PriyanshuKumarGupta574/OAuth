@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Box, Card, Typography, Button, Stack } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import { toast } from "react-toastify";
 import HistoryIcon from "@mui/icons-material/History";
 import RestoreIcon from "@mui/icons-material/Restore";
@@ -38,43 +38,47 @@ export default function SnippetHistory() {
 
   return (
     <DashboardLayout>
-      <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-          <HistoryIcon color="primary" sx={{ fontSize: 32 }} />
-          <Typography variant="h4" fontWeight={700}>
+      <div className="max-w-[900px] mx-auto mt-10 p-4">
+        <div className="flex items-center gap-4 mb-8">
+          <HistoryIcon className="text-3xl text-[#1a73e8]" />
+          <Typography variant="h4" className="font-extrabold text-slate-800">
             Version History
           </Typography>
-        </Box>
+        </div>
 
         {history.length === 0 ? (
-          <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>
-            No history found for this snippet.
-          </Typography>
+          <div className="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+            <Typography className="text-slate-500 font-medium italic">No history found for this snippet.</Typography>
+          </div>
         ) : (
-          history.map((v) => (
-            <Card key={v._id} sx={{ p: 3, mb: 2, borderRadius: 3, boxShadow: 'none', border: '1px solid #e2e8f0' }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
+          <div className="space-y-4">
+            {history.map((v) => (
+              <div
+                key={v._id}
+                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4 group"
+              >
+                <div>
+                  <Typography variant="subtitle1" className="font-bold text-slate-800 group-hover:text-[#1a73e8] transition-colors">
                     Code Revision
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" className="text-slate-500 font-medium uppercase tracking-wider text-[10px] mt-1 block">
                     {new Date(v.editedAt).toLocaleString()}
                   </Typography>
-                </Box>
+                </div>
                 <Button
                   variant="outlined"
                   startIcon={<RestoreIcon />}
                   size="small"
                   onClick={() => restore(v._id)}
+                  className="normal-case font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-[#1a73e8] hover:text-[#1a73e8] rounded-xl px-4 py-2"
                 >
                   Restore
                 </Button>
-              </Stack>
-            </Card>
-          ))
+              </div>
+            ))}
+          </div>
         )}
-      </Box>
+      </div>
     </DashboardLayout>
   );
 }
