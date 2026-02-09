@@ -77,7 +77,7 @@ export default function TrendingSnippets() {
                                 className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative group"
                                 onClick={() => navigate(`/dashboard/snippets/${snippet._id}`)}
                             >
-                                {/* Trending Rank Badge */}
+                               
                                 {index < 3 && (
                                     <div
                                         className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-lg ${index === 0
@@ -99,7 +99,7 @@ export default function TrendingSnippets() {
                                     by <span className="font-semibold text-slate-700">{snippet.author.name}</span> • <span className="font-mono text-xs">{snippet.language}</span>
                                 </Typography>
 
-                                {/* Tags */}
+                               
                                 <div className="flex flex-wrap gap-2 mb-6">
                                     {snippet.tags.slice(0, 3).map((tag) => (
                                         <Chip
@@ -111,7 +111,7 @@ export default function TrendingSnippets() {
                                     ))}
                                 </div>
 
-                                {/* Stats */}
+                               
                                 <div className="flex gap-6 items-center flex-wrap pt-4 border-t border-slate-50">
                                     <div className="flex items-center gap-1.5 text-slate-500">
                                         <VisibilityIcon className="text-sm" />

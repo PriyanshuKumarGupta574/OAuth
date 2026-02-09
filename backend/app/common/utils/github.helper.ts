@@ -7,10 +7,7 @@ interface GitHubTokenResult {
     user: IUser;
 }
 
-/**
- * Validates and retrieves GitHub access token for a user
- * Eliminates repetitive user fetching and token validation
- */
+
 export const getGitHubToken = async (
     userId: string | Types.ObjectId,
     res: Response

@@ -35,7 +35,7 @@ export const createGist = async (accessToken: string, snippet: GistSnippet) => {
         "https://api.github.com/gists",
         {
             description: snippet.title,
-            public: false, // Default to secret gist
+            public: false, 
             files
         },
         {

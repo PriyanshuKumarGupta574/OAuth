@@ -6,9 +6,6 @@ import {
 } from "../services/analytics.service";
 import { handleError } from "../../common/utils/error.handler";
 
-/**
- * Track a view for a snippet
- */
 export const trackView = async (req: Request, res: Response) => {
     try {
         const snippetId = req.params.id as string;
@@ -24,9 +21,7 @@ export const trackView = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Get trending snippets
- */
+
 export const getTrendingSnippets = async (req: Request, res: Response) => {
     try {
         const limit = parseInt(req.query.limit as string) || 10;
@@ -38,9 +33,7 @@ export const getTrendingSnippets = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Get user's snippet analytics
- */
+
 export const getUserAnalytics = async (req: Request, res: Response) => {
     try {
         const userId = req.user!._id;

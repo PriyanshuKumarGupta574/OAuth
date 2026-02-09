@@ -26,7 +26,6 @@ export const createCommentService = async (
 };
 
 export const getCommentsBySnippetService = async (snippetId: string) => {
-  // Get all top-level comments (no parent)
   const topLevelComments = await Comment.find({
     snippet: snippetId,
     parentComment: null,
@@ -35,7 +34,6 @@ export const getCommentsBySnippetService = async (snippetId: string) => {
     .sort({ createdAt: 1 })
     .lean();
 
-  // Recursively populate replies for each comment
   const populateReplies = async (commentId: mongoose.Types.ObjectId | string): Promise<CommentWithReplies[]> => {
     const replies = await Comment.find({ parentComment: commentId })
       .populate("author", "name email")
@@ -52,7 +50,7 @@ export const getCommentsBySnippetService = async (snippetId: string) => {
     return repliesWithNested as unknown as CommentWithReplies[];
   };
 
-  // Add replies to each top-level comment
+
   const commentsWithReplies = await Promise.all(
     topLevelComments.map(async (comment) => ({
       ...comment,

@@ -37,10 +37,9 @@ const commentSchema = new Schema<IComment>(
     { timestamps: true }
 );
 
-// Index for efficient querying of comments by snippet
+
 commentSchema.index({ snippet: 1, createdAt: 1 });
 
-// Index for efficient querying of replies
 commentSchema.index({ parentComment: 1, createdAt: 1 });
 
 export default mongoose.model<IComment>("Comment", commentSchema);

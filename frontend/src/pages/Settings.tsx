@@ -17,7 +17,7 @@ export default function Settings() {
                     Settings
                 </Typography>
 
-                {/* Appearance section */}
+                
                 <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
                     <div className="p-8 border-b border-slate-50">
                         <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
@@ -45,7 +45,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                {/* Notifications section */}
+               
                 <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
                     <div className="p-8 border-b border-slate-50">
                         <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
@@ -73,7 +73,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                {/* Security section */}
+                
                 <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
                     <div className="p-8 border-b border-slate-50">
                         <Typography variant="h6" className="font-extrabold text-slate-800 mb-1">
@@ -94,7 +94,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                {/* Danger Zone */}
+             
                 <div className="bg-white rounded-3xl border-2 border-red-100 shadow-sm overflow-hidden">
                     <div className="p-8 bg-red-50/30 border-b border-red-50">
                         <Typography variant="h6" className="font-extrabold text-red-600 mb-1">

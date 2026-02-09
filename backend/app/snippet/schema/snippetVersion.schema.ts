@@ -26,29 +26,3 @@ export default mongoose.model<ISnippetVersion>(
 );
 
 
-// import mongoose, { Schema, Document } from "mongoose";
-
-// export interface ISnippetVersion extends Document {
-//   snippet: mongoose.Types.ObjectId;
-//   title: string;
-//   code: string;
-//   language: string;
-//   tags: string[];
-//   editedAt: Date;
-//   editedBy: mongoose.Types.ObjectId;
-// }
-
-// const snippetVersionSchema = new Schema<ISnippetVersion>({
-//   snippet: { type: Schema.Types.ObjectId, ref: "Snippet", required: true },
-//   title: String,
-//   code: String,
-//   language: String,
-//   tags: [String],
-//   editedBy: { type: Schema.Types.ObjectId, ref: "User" },
-//   editedAt: { type: Date, default: Date.now },
-// });
-
-// export default mongoose.model<ISnippetVersion>(
-//   "SnippetVersion",
-//   snippetVersionSchema
-// );

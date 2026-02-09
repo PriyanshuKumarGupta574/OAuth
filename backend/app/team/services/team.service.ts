@@ -10,13 +10,13 @@ export const createTeamService = async (
         name,
         description,
         owner: new mongoose.Types.ObjectId(userId),
-        members: [], // Owner is separate from members list for clarity, or implied as super-admin
+        members: [], 
     });
     return team;
 };
 
 export const getTeamsForUserService = async (userId: string) => {
-    // Find teams where user is owner OR a member
+  
     return await Team.find({
         $or: [{ owner: new mongoose.Types.ObjectId(userId) }, { "members.user": new mongoose.Types.ObjectId(userId) }],
     })
@@ -32,7 +32,7 @@ export const getTeamByIdService = async (teamId: string, userId: string) => {
 
     if (!team) throw new Error("Team not found");
 
-    // Check if user has access
+    
     const isOwner = team.owner._id.toString() === userId;
     const isMember = team.members.some(
         (m) => (m.user as PopulatedUser)._id.toString() === userId
@@ -54,12 +54,11 @@ export const addMemberService = async (
     const team = await Team.findById(teamId);
     if (!team) throw new Error("Team not found");
 
-    // Only owner can add members
     if (team.owner.toString() !== requesterId) {
         throw new Error("Only team owner can add members");
     }
 
-    // Check if already a member
+   
     const exists = team.members.some(
         (m) => m.user.toString() === newMemberId
     );
@@ -83,7 +82,7 @@ export const removeMemberService = async (
     const team = await Team.findById(teamId);
     if (!team) throw new Error("Team not found");
 
-    // Only owner can remove members, or member removing themselves (leave team)
+  
     if (
         team.owner.toString() !== requesterId &&
         requesterId !== memberIdToRemove

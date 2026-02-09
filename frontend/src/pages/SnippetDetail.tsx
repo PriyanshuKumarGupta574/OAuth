@@ -37,7 +37,7 @@ export default function SnippetDetail() {
   useEffect(() => {
     if (id) {
       getSnippetById(id).then((res) => setSnippet(res.data));
-      // Track view
+    
       trackSnippetView(id).catch((err) => console.error("Failed to track view:", err));
     }
   }, [id]);
@@ -96,7 +96,7 @@ export default function SnippetDetail() {
           </div>
 
           <div className="flex flex-wrap gap-3 pt-6 border-t border-slate-50">
-            {/* Primary Actions */}
+         
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <Button
                 variant="contained"
@@ -126,7 +126,7 @@ export default function SnippetDetail() {
 
             <div className="hidden md:block w-px h-11 bg-slate-200 mx-1" />
 
-            {/* Sharing/Forking */}
+           
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <Tooltip title="Copy public share link">
                 <Button
@@ -178,7 +178,7 @@ export default function SnippetDetail() {
 
             <div className="hidden md:block w-px h-11 bg-slate-200 mx-1" />
 
-            {/* Management Actions */}
+          
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <Button
                 variant="outlined"

@@ -37,7 +37,6 @@ export default function SnippetList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // tag, language, page, search, author, startDate, endDate
     getSnippets(
       filters.tag,
       filters.language,
@@ -54,14 +53,12 @@ export default function SnippetList() {
 
   const handleSearch = (newFilters: SnippetFilters) => {
     setFilters({ ...filters, ...newFilters });
-    // Reset to page 1 on new search
     setPage(1);
   };
 
   return (
     <DashboardLayout>
       <div className="max-w-[900px] mx-auto mt-10">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <Typography variant="h4" className="font-extrabold text-slate-800">My Snippets</Typography>
           <div className="flex gap-3">
@@ -109,10 +106,8 @@ export default function SnippetList() {
           </div>
         </div>
 
-        {/* Enhanced Search Bar */}
-        <SearchBar onSearch={handleSearch} />
 
-        {/* SNIPPET CARDS */}
+        <SearchBar onSearch={handleSearch} />
         {snippets.length === 0 ? (
           <Typography variant="body1" color="text.secondary" className="text-center mt-12 py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
             No snippets found. Try adjusting your filters.
@@ -171,7 +166,6 @@ export default function SnippetList() {
           </div>
         )}
 
-        {/* Pagination */}
         {snippets.length > 0 && (
           <div className="flex justify-center items-center mt-12 gap-6 pb-8">
             <Button

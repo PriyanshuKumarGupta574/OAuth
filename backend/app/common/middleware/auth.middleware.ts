@@ -24,7 +24,7 @@ export const authMiddleware = (
 
     req.user = {
       _id: decoded.id,
-      email: "", // email will be filled if needed or fetched from DB
+      email: "", 
     };
 
     next();

@@ -12,9 +12,6 @@ import { getUserAnalytics } from "../services/analytics.service";
 import type { UserStats } from "../types";
 
 export default function Profile() {
-    // Decode token or fetch user details. For now, using mock or minimal data
-    // In a real app, you'd have a /auth/me endpoint.
-    // Assuming we might need to add that, but for now let's display what we can or generic info.
 
     const [stats, setStats] = useState<UserStats | null>(null);
 
@@ -22,12 +19,9 @@ export default function Profile() {
         getUserAnalytics().then((res) => setStats(res.data)).catch(console.error);
     }, []);
 
-    // Mock user data since we don't have a direct /me endpoint in the context yet
-    // We would typically verify the token and get user info.
-    // For the UI demonstration:
     const user = {
-        name: "User", // This would ideally come from the backend
-        email: "user@example.com", // This would ideally come from the backend
+        name: "User", 
+        email: "user@example.com", 
         joinDate: "January 2026",
     };
 
@@ -104,7 +98,7 @@ export default function Profile() {
                     </div>
                 </div>
 
-                {/* Activity Overview */}
+             
                 <div className="space-y-6">
                     <Typography variant="h6" className="font-extrabold text-slate-800 flex items-center gap-2">
                         <span className="w-1.5 h-6 bg-emerald-500 rounded-full"></span>

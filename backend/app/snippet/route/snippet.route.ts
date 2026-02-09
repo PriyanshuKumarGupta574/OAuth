@@ -24,10 +24,8 @@ import {
 
 const router = Router();
 
-/* ================= FOLDER ROUTES ================= */
 router.use("/folders", folderRoutes);
 
-/* ================= SNIPPET ROUTES ================= */
 router.post("/", authMiddleware, createSnippet);
 router.get("/", authMiddleware, getAllSnippets);
 
@@ -45,13 +43,12 @@ router.post("/:id/fork", authMiddleware, forkSnippet);
 router.put("/:id", authMiddleware, updateSnippet);
 router.delete("/:id", authMiddleware, deleteSnippet);
 
-/* ================= COMMENT ROUTES ================= */
+
 router.post("/:id/comments", authMiddleware, createComment);
 router.get("/:id/comments", authMiddleware, getCommentsBySnippet);
 
-/* ================= ANALYTICS ROUTES ================= */
-router.post("/:id/view", trackView); // Public endpoint for tracking views
-router.get("/trending/list", getTrendingSnippets); // Public endpoint
+router.post("/:id/view", trackView); 
+router.get("/trending/list", getTrendingSnippets); 
 router.get("/analytics/user", authMiddleware, getUserAnalytics);
 
 export default router;

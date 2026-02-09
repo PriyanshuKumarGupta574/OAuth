@@ -143,7 +143,7 @@ export default function FolderSidebar() {
     const res = await getFolders();
     const foldersData = res.data;
 
-    // Load snippets for each folder
+ 
     const foldersWithSnippets = await Promise.all(
       foldersData.map(async (folder: Folder) => {
         try {
@@ -165,7 +165,7 @@ export default function FolderSidebar() {
   const loadUnassignedSnippets = async () => {
     try {
       const res = await getSnippets();
-      // Filter snippets without folder
+      
       const unassigned = res.data.snippets.filter(
         (s: Snippet) => !s.folder || s.folder === null
       );
@@ -200,7 +200,7 @@ export default function FolderSidebar() {
 
   return (
     <div className="w-[280px] border-r border-slate-200 p-4 h-screen overflow-auto bg-white flex flex-col">
-      {/* Navigation Section */}
+     
       <div className="space-y-1 mb-8">
         {[
           { label: "Dashboard", icon: "📊", path: "/dashboard/analytics" },
@@ -250,7 +250,7 @@ export default function FolderSidebar() {
           />
         ))}
 
-        {/* Unassigned Snippets Section */}
+       
         <div className="mt-4">
           <div
             onClick={() => setShowUnassigned(!showUnassigned)}

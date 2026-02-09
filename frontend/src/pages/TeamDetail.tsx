@@ -50,7 +50,7 @@ export default function TeamDetail() {
 
     const fetchSnippets = async () => {
         try {
-            // Fetch snippets for this team
+            
             const res = await getSnippets(undefined, undefined, 1, undefined, undefined, undefined, undefined, id);
             setSnippets(res.data.snippets);
         } catch (err) {

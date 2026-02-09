@@ -1,6 +1,5 @@
 import api from "./api";
 
-// Comment type for threaded discussions
 export interface Comment {
   _id: string;
   snippet: string;

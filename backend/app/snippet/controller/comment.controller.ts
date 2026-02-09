@@ -8,7 +8,7 @@ import { updateCommentCountService } from "../services/analytics.service";
 import { asyncHandler, handleError } from "../../common/utils/error.handler";
 import { getUserId, getParamId } from "../../common/helper/request.helper";
 
-/* ================= CREATE COMMENT ================= */
+
 export const createComment = asyncHandler(async (req: Request, res: Response) => {
   const snippetId = getParamId(req);
   const { text, parentCommentId } = req.body;
@@ -17,7 +17,7 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
     return res.status(400).json({ message: "Comment text is required" });
   }
 
-  // If parentCommentId is provided, validate it exists and belongs to the same snippet
+  
   if (parentCommentId) {
     const parentComment = await Comment.findById(parentCommentId);
 
@@ -39,13 +39,13 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
     parentCommentId
   );
 
-  // Update comment count for analytics
+ 
   await updateCommentCountService(snippetId);
 
   res.status(201).json(comment);
 }, (res, error) => handleError(res, error, "Failed to create comment"));
 
-/* ================= GET COMMENTS ================= */
+
 export const getCommentsBySnippet = asyncHandler(async (req: Request, res: Response) => {
   const comments = await getCommentsBySnippetService(getParamId(req));
   res.json(comments);

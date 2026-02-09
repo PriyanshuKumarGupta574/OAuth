@@ -34,7 +34,6 @@ export const deleteFolder = asyncHandler(async (req: Request, res: Response) => 
     return res.status(404).json({ message: "Folder not found" });
   }
 
-  // security — only owner can delete
   if (folder.user.toString() !== req.user!._id) {
     return res.status(403).json({ message: "Unauthorized" });
   }
