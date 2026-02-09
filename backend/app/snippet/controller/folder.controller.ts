@@ -1,23 +1,21 @@
 import { Request, Response } from "express";
 import Folder from "../schema/folder.schema";
 import Snippet from "../schema/snippet.schema";
+import { asyncHandler, handleError } from "../../common/utils/error.handler";
+import { getUserId, getParamId } from "../../common/helper/request.helper";
 
-export const createFolder = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
+export const createFolder = asyncHandler(async (req: Request, res: Response) => {
+  const { name } = req.body;
 
-    const folder = await Folder.create({
-      name,
-      user: req.user!._id,
-    });
+  const folder = await Folder.create({
+    name,
+    user: req.user!._id,
+  });
 
-    res.status(201).json(folder);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to create folder" });
-  }
-};
+  res.status(201).json(folder);
+}, (res, error) => handleError(res, error, "Failed to create folder"));
 
-export const moveSnippetToFolder = async (req: Request, res: Response) => {
+export const moveSnippetToFolder = asyncHandler(async (req: Request, res: Response) => {
   const { snippetId, folderId } = req.body;
 
   const snippet = await Snippet.findByIdAndUpdate(
@@ -27,35 +25,30 @@ export const moveSnippetToFolder = async (req: Request, res: Response) => {
   );
 
   res.json(snippet);
-};
+}, (res, error) => handleError(res, error, "Failed to move snippet"));
 
-export const deleteFolder = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+export const deleteFolder = asyncHandler(async (req: Request, res: Response) => {
+  const folder = await Folder.findById(getParamId(req));
 
-    const folder = await Folder.findById(id);
-
-    if (!folder) {
-      return res.status(404).json({ message: "Folder not found" });
-    }
-
-    // security — only owner can delete
-    if (folder.user.toString() !== req.user!._id) {
-      return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    await Folder.findByIdAndDelete(id);
-
-    res.json({ message: "Folder deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Delete folder failed" });
+  if (!folder) {
+    return res.status(404).json({ message: "Folder not found" });
   }
-};
 
-export const getFolders = async (req: Request, res: Response) => {
+  // security — only owner can delete
+  if (folder.user.toString() !== req.user!._id) {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  await Folder.findByIdAndDelete(getParamId(req));
+
+  res.json({ message: "Folder deleted successfully" });
+}, (res, error) => handleError(res, error, "Delete folder failed"));
+
+export const getFolders = asyncHandler(async (req: Request, res: Response) => {
   const folders = await Folder.find({
     user: req.user!._id,
   });
 
   res.json(folders);
-};
+}, (res, error) => handleError(res, error, "Failed to fetch folders"));
+

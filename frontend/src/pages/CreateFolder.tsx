@@ -5,10 +5,12 @@ import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import DashboardLayout from "../layout/DashboardLayout";
 import { createFolder } from "../services/folder.service";
 import { useNavigate } from "react-router";
+import { useApiError, type ApiError } from "../hooks/useApiError";
 
 export default function CreateFolder() {
   const [name, setName] = useState("");
   const navigate = useNavigate();
+  const { extractErrorMessage } = useApiError();
 
   const handleCreate = async () => {
     try {
@@ -21,8 +23,8 @@ export default function CreateFolder() {
 
       navigate("/dashboard/snippets");
     } catch (err) {
-      console.error(err);
-      alert("Failed to create folder");
+      const error = err as ApiError | string;
+      toast.error(extractErrorMessage(error, "Failed to create folder"));
     }
   };
 

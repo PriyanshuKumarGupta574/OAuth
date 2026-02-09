@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import User from "../../auth/schemas/user.schema";
 import { getGists, getGistById, createGist, GistSnippet } from "../../common/services/github.service";
 import { createSnippetService, getSnippetByIdService } from "../services/snippet.service";
+import { getGitHubToken } from "../../common/utils/github.helper";
+import { handleError } from "../../common/utils/error.handler";
 
 interface GithubGist {
     id: string;
@@ -13,16 +14,11 @@ interface GithubGist {
 
 export const listGists = async (req: Request, res: Response) => {
     try {
-        const userId = req.user!._id;
-        // We need to fetch the user with githubAccessToken selected
-        const user = await User.findById(userId).select("+githubAccessToken");
+        const tokenResult = await getGitHubToken(req.user!._id, res);
+        if (!tokenResult) return;
 
-        if (!user || !user.githubAccessToken) {
-            return res.status(400).json({ message: "GitHub not connected" });
-        }
+        const gists = await getGists(tokenResult.token) as GithubGist[];
 
-        const gists = await getGists(user.githubAccessToken) as GithubGist[];
-        // Transform to simplified format
         const simplified = gists.map((g) => ({
             id: g.id,
             description: g.description || "No description",
@@ -33,8 +29,7 @@ export const listGists = async (req: Request, res: Response) => {
 
         res.json(simplified);
     } catch (error: unknown) {
-        const err = error as Error;
-        res.status(500).json({ message: err.message });
+        handleError(res, error, "Failed to fetch gists");
     }
 };
 
@@ -42,20 +37,16 @@ export const importGist = async (req: Request, res: Response) => {
     try {
         const userId = req.user!._id;
         const { gistId } = req.body;
-        const user = await User.findById(userId).select("+githubAccessToken");
 
-        if (!user || !user.githubAccessToken) {
-            return res.status(400).json({ message: "GitHub not connected" });
-        }
+        const tokenResult = await getGitHubToken(userId, res);
+        if (!tokenResult) return;
 
-        const gist = await getGistById(gistId, user.githubAccessToken);
+        const gist = await getGistById(gistId, tokenResult.token);
 
-        // Take the first file
         const filename = Object.keys(gist.files)[0];
         const file = gist.files[filename];
         const language = file.language ? file.language.toLowerCase() : "text";
 
-        // Create snippet
         const snippet = await createSnippetService({
             title: gist.description || filename,
             code: file.content,
@@ -67,20 +58,17 @@ export const importGist = async (req: Request, res: Response) => {
 
         res.status(201).json(snippet);
     } catch (error: unknown) {
-        const err = error as Error;
-        res.status(500).json({ message: err.message });
+        handleError(res, error, "Failed to import gist");
     }
 };
 
 export const exportGist = async (req: Request, res: Response) => {
     try {
         const userId = req.user!._id;
-        const id = req.params.id as string; // snippet id
-        const user = await User.findById(userId).select("+githubAccessToken");
+        const id = req.params.id as string;
 
-        if (!user || !user.githubAccessToken) {
-            return res.status(400).json({ message: "GitHub not connected" });
-        }
+        const tokenResult = await getGitHubToken(userId, res);
+        if (!tokenResult) return;
 
         const snippet = await getSnippetByIdService(id, userId as string);
 
@@ -90,11 +78,10 @@ export const exportGist = async (req: Request, res: Response) => {
             code: snippet.code
         };
 
-        const gist = await createGist(user.githubAccessToken, gistData);
+        const gist = await createGist(tokenResult.token, gistData);
 
         res.json({ message: "Exported successfully", html_url: gist.html_url });
     } catch (error: unknown) {
-        const err = error as Error;
-        res.status(500).json({ message: err.message });
+        handleError(res, error, "Failed to export gist");
     }
 };

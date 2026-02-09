@@ -4,6 +4,7 @@ import {
     getTrendingSnippetsService,
     getUserAnalyticsService,
 } from "../services/analytics.service";
+import { handleError } from "../../common/utils/error.handler";
 
 /**
  * Track a view for a snippet
@@ -19,9 +20,7 @@ export const trackView = async (req: Request, res: Response) => {
 
         res.json({ message: "View tracked", views: snippet.views });
     } catch (error: unknown) {
-        const err = error as Error;
-        console.error("Track view error:", err.message);
-        res.status(500).json({ message: "Failed to track view" });
+        handleError(res, error, "Failed to track view");
     }
 };
 
@@ -35,9 +34,7 @@ export const getTrendingSnippets = async (req: Request, res: Response) => {
 
         res.json(snippets);
     } catch (error: unknown) {
-        const err = error as Error;
-        console.error("Get trending snippets error:", err.message);
-        res.status(500).json({ message: "Failed to get trending snippets" });
+        handleError(res, error, "Failed to get trending snippets");
     }
 };
 
@@ -51,8 +48,6 @@ export const getUserAnalytics = async (req: Request, res: Response) => {
 
         res.json(analytics);
     } catch (error: unknown) {
-        const err = error as Error;
-        console.error("Get user analytics error:", err.message);
-        res.status(500).json({ message: "Failed to get analytics" });
+        handleError(res, error, "Failed to get analytics");
     }
 };

@@ -12,71 +12,57 @@ import {
 import Snippet from "../schema/snippet.schema";
 import SnippetVersion from "../schema/snippetVersion.schema";
 import { incrementForkCountService } from "../services/analytics.service";
+import { asyncHandler, handleError } from "../../common/utils/error.handler";
+import { getUserId, getUserIdOptional, getParamId } from "../../common/helper/request.helper";
 
-export const createSnippet = async (req: Request, res: Response) => {
-  try {
-    const snippet = await createSnippetService({
-      ...req.body,
-      author: req.user!._id,
-    });
+export const createSnippet = asyncHandler(async (req: Request, res: Response) => {
+  const snippet = await createSnippetService({
+    ...req.body,
+    author: req.user!._id,
+  });
 
-    res.status(201).json(snippet);
-  } catch (error: unknown) {
-    const err = error as Error;
-    res.status(500).json({ message: err.message || "Failed to create snippet" });
-  }
-};
+  res.status(201).json(snippet);
+}, (res, error) => handleError(res, error, "Failed to create snippet"));
 
-export const getAllSnippets = async (req: Request, res: Response) => {
-  try {
-    const {
-      tag,
-      language,
-      author,
-      startDate,
-      endDate,
-      search,
-      page = 1,
-      limit = 6
-    } = req.query;
+export const getAllSnippets = asyncHandler(async (req: Request, res: Response) => {
+  const {
+    tag,
+    language,
+    author,
+    startDate,
+    endDate,
+    search,
+    page = 1,
+    limit = 6
+  } = req.query;
 
-    const data = await getAllSnippetsService(
-      req.user?._id,
-      tag as string,
-      language as string,
-      author as string,
-      startDate as string,
-      endDate as string,
-      search as string,
-      (req.query.teamId as string),
-      Number(page),
-      Number(limit)
-    );
+  const data = await getAllSnippetsService(
+    getUserIdOptional(req),
+    tag as string,
+    language as string,
+    author as string,
+    startDate as string,
+    endDate as string,
+    search as string,
+    (req.query.teamId as string),
+    Number(page),
+    Number(limit)
+  );
 
-    res.json(data);
-  } catch (error: unknown) {
-    res.status(500).json({ message: "Failed to fetch snippets" });
-  }
-};
+  res.json(data);
+}, (res, error) => handleError(res, error, "Failed to fetch snippets"));
 
-export const getSnippetById = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id as string;
+export const getSnippetById = asyncHandler(async (req: Request, res: Response) => {
+  const snippet = await getSnippetByIdService(
+    getParamId(req),
+    getUserIdOptional(req)
+  );
 
-    const snippet = await getSnippetByIdService(
-      id,
-      req.user?._id
-    );
+  res.json(snippet);
+}, (res, error) => handleError(res, error, "Access denied", 403));
 
-    res.json(snippet);
-  } catch (error: unknown) {
-    const err = error as Error;
-    res.status(403).json({ message: err.message });
-  }
-};
-
-export const getPublicSnippet = async (req: Request, res: Response) => {
-  const snippet = await Snippet.findById(req.params.id);
+export const getPublicSnippet = asyncHandler(async (req: Request, res: Response) => {
+  const snippet = await Snippet.findById(getParamId(req));
 
   if (!snippet) {
     return res.status(404).json({ message: "Not found" });
@@ -87,109 +73,85 @@ export const getPublicSnippet = async (req: Request, res: Response) => {
   }
 
   res.json(snippet);
-};
+});
 
-export const updateSnippet = async (req: Request, res: Response) => {
-  try {
-    const snippet = await updateSnippetService(
-      req.params.id as string,
-      req.user!._id,
-      req.body
-    );
-    res.json(snippet);
-  } catch (error: unknown) {
-    const err = error as Error;
-    res.status(403).json({ message: err.message });
-  }
-};
+export const updateSnippet = asyncHandler(async (req: Request, res: Response) => {
+  const snippet = await updateSnippetService(
+    getParamId(req),
+    getUserId(req),
+    req.body
+  );
+  res.json(snippet);
+}, (res, error) => handleError(res, error, "Access denied", 403));
 
-export const restoreSnippetVersion = async (req: Request, res: Response) => {
-  try {
-    const { versionId } = req.params;
+export const restoreSnippetVersion = asyncHandler(async (req: Request, res: Response) => {
+  const { versionId } = req.params;
 
-    const version = await SnippetVersion.findById(versionId);
+  const version = await SnippetVersion.findById(versionId);
 
-    if (!version)
-      return res.status(404).json({ message: "Version not found" });
+  if (!version)
+    return res.status(404).json({ message: "Version not found" });
 
-    const updated = await Snippet.findByIdAndUpdate(
-      version.snippet,
-      {
-        title: version.title,
-        code: version.code,
-        language: version.language,
-        tags: version.tags,
-        visibility: version.visibility,
-      },
-      { new: true }
-    );
+  const updated = await Snippet.findByIdAndUpdate(
+    version.snippet,
+    {
+      title: version.title,
+      code: version.code,
+      language: version.language,
+      tags: version.tags,
+      visibility: version.visibility,
+    },
+    { new: true }
+  );
 
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ message: "Restore failed" });
-  }
-};
+  res.json(updated);
+}, (res, error) => handleError(res, error, "Restore failed"));
 
-export const getSnippetHistory = async (req: Request, res: Response) => {
+export const getSnippetHistory = asyncHandler(async (req: Request, res: Response) => {
   const history = await SnippetVersion.find({
-    snippet: req.params.id,
+    snippet: getParamId(req),
   }).sort({ editedAt: -1 });
 
   res.json(history);
-};
+});
 
-export const getSnippetsByFolder = async (req: Request, res: Response) => {
-  try {
-    const snippets = await getSnippetsByFolderService(
-      req.params.folderId as string,
-      req.user!._id
-    );
+export const getSnippetsByFolder = asyncHandler(async (req: Request, res: Response) => {
+  const snippets = await getSnippetsByFolderService(
+    getParamId(req, "folderId"),
+    getUserId(req)
+  );
 
-    res.json(snippets);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch folder snippets" });
-  }
-};
+  res.json(snippets);
+}, (res, error) => handleError(res, error, "Failed to fetch folder snippets"));
 
-export const moveSnippetToFolder = async (req: Request, res: Response) => {
-  const { id } = req.params;
+export const moveSnippetToFolder = asyncHandler(async (req: Request, res: Response) => {
   const { folderId } = req.body;
 
   const snippet = await Snippet.findByIdAndUpdate(
-    id,
+    getParamId(req),
     { folder: folderId },
     { new: true }
   );
 
   res.json(snippet);
-};
+});
 
-export const forkSnippet = async (req: Request, res: Response) => {
-  try {
-    const originalSnippetId = req.params.id as string;
+export const forkSnippet = asyncHandler(async (req: Request, res: Response) => {
+  const originalSnippetId = getParamId(req);
 
-    const forked = await forkSnippetService(
-      originalSnippetId,
-      req.user!._id
-    );
+  const forked = await forkSnippetService(
+    originalSnippetId,
+    getUserId(req)
+  );
 
-    await incrementForkCountService(originalSnippetId);
+  await incrementForkCountService(originalSnippetId);
 
-    res.status(201).json(forked);
-  } catch (error: unknown) {
-    const err = error as Error;
-    res.status(500).json({ message: err.message });
-  }
-};
+  res.status(201).json(forked);
+}, (res, error) => handleError(res, error, "Operation failed"));
 
-export const deleteSnippet = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?._id;
+export const deleteSnippet = asyncHandler(async (req: Request, res: Response) => {
+  await deleteSnippetService(getParamId(req), getUserIdOptional(req));
 
-    await deleteSnippetService(req.params.id as string, userId);
+  res.json({ message: "Snippet deleted" });
+}, (res, error) => handleError(res, error, "Not allowed to delete this snippet", 403));
 
-    res.json({ message: "Snippet deleted" });
-  } catch (error) {
-    res.status(403).json({ message: "Not allowed to delete this snippet" });
-  }
-};

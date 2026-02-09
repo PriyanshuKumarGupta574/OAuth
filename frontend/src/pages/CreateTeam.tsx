@@ -3,20 +3,23 @@ import { Typography, TextField, Button, Alert } from "@mui/material";
 import { useNavigate } from "react-router";
 import DashboardLayout from "../layout/DashboardLayout";
 import { createTeam } from "../services/team.service";
+import { useApiError, type ApiError } from "../hooks/useApiError";
 
 export default function CreateTeam() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const { extractErrorMessage } = useApiError();
 
     const handleCreate = async () => {
         try {
             if (!name) return setError("Team name is required");
             await createTeam(name, description);
             navigate("/dashboard/teams");
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Failed to create team");
+        } catch (err) {
+            const error = err as ApiError | string;
+            setError(extractErrorMessage(error, "Failed to create team"));
         }
     };
 

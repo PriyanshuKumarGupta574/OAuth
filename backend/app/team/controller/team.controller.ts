@@ -8,101 +8,72 @@ import {
     updateMemberRoleService,
 } from "../services/team.service";
 import User from "../../auth/schemas/user.schema";
+import { asyncHandler, handleError } from "../../common/utils/error.handler";
+import { getUserId, getParamId } from "../../common/helper/request.helper";
 
-export const createTeam = async (req: Request, res: Response) => {
-    try {
-        const { name, description } = req.body;
-        const userId = req.user!._id;
+export const createTeam = asyncHandler(async (req: Request, res: Response) => {
+    const { name, description } = req.body;
 
-        if (!name) {
-            return res.status(400).json({ message: "Team name is required" });
-        }
-
-        const team = await createTeamService(userId.toString(), name, description);
-        res.status(201).json(team);
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(500).json({ message: err.message });
+    if (!name) {
+        return res.status(400).json({ message: "Team name is required" });
     }
-};
 
-export const getMyTeams = async (req: Request, res: Response) => {
-    try {
-        const userId = req.user!._id;
-        const teams = await getTeamsForUserService(userId.toString());
-        res.json(teams);
-    } catch (error: unknown) {
-        res.status(500).json({ message: "Failed to fetch teams" });
+    const team = await createTeamService(getUserId(req), name, description);
+    res.status(201).json(team);
+}, (res, error) => handleError(res, error, "Failed to create team"));
+
+export const getMyTeams = asyncHandler(async (req: Request, res: Response) => {
+    const teams = await getTeamsForUserService(getUserId(req));
+    res.json(teams);
+}, (res, error) => handleError(res, error, "Failed to fetch teams"));
+
+export const getTeamById = asyncHandler(async (req: Request, res: Response) => {
+    const team = await getTeamByIdService(getParamId(req), getUserId(req));
+    res.json(team);
+}, (res, error) => handleError(res, error, "Access denied", 403));
+
+export const addMember = asyncHandler(async (req: Request, res: Response) => {
+    const { email, role } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(404).json({ message: "User not found with this email" });
     }
-};
 
-export const getTeamById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params as { id: string };
-        const userId = req.user!._id;
-        const team = await getTeamByIdService(id, userId.toString());
-        res.json(team);
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(403).json({ message: err.message });
-    }
-};
+    const team = await addMemberService(
+        getParamId(req),
+        getUserId(req),
+        user._id.toString(),
+        role || "viewer"
+    );
+    res.json(team);
+}, (res, error) => handleError(res, error, "Failed to add member", 400));
 
-export const addMember = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params as { id: string };
-        const { email, role } = req.body;
-        const requesterId = req.user!._id;
+export const removeMember = asyncHandler(async (req: Request, res: Response) => {
+    const team = await removeMemberService(
+        getParamId(req),
+        getUserId(req),
+        req.params.memberId as string
+    );
+    res.json(team);
+}, (res, error) => handleError(res, error, (error as Error).message, 400));
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found with this email" });
-        }
+export const leaveTeam = asyncHandler(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
 
-        const team = await addMemberService(id, requesterId.toString(), user._id.toString(), role || "viewer");
-        res.json(team);
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(400).json({ message: err.message });
-    }
-};
+    await removeMemberService(getParamId(req), userId, userId);
+    res.json({ message: "Left team successfully" });
+}, (res, error) => handleError(res, error, (error as Error).message, 400));
 
-export const removeMember = async (req: Request, res: Response) => {
-    try {
-        const { id, memberId } = req.params as { id: string; memberId: string };
-        const requesterId = req.user!._id;
+export const updateMemberRole = asyncHandler(async (req: Request, res: Response) => {
+    const { role } = req.body;
 
-        const team = await removeMemberService(id, requesterId.toString(), memberId);
-        res.json(team);
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(400).json({ message: err.message });
-    }
-};
+    const team = await updateMemberRoleService(
+        getParamId(req),
+        getUserId(req),
+        req.params.memberId as string,
+        role
+    );
+    res.json(team);
+}, (res, error) => handleError(res, error, (error as Error).message, 400));
 
-export const leaveTeam = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params as { id: string };
-        const requesterId = req.user!._id;
-
-        await removeMemberService(id, requesterId.toString(), requesterId.toString());
-        res.json({ message: "Left team successfully" });
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(400).json({ message: err.message });
-    }
-};
-
-export const updateMemberRole = async (req: Request, res: Response) => {
-    try {
-        const { id, memberId } = req.params as { id: string; memberId: string };
-        const { role } = req.body;
-        const requesterId = req.user!._id;
-
-        const team = await updateMemberRoleService(id, requesterId.toString(), memberId, role);
-        res.json(team);
-    } catch (error: unknown) {
-        const err = error as Error;
-        res.status(400).json({ message: err.message });
-    }
-};

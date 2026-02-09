@@ -1,4 +1,21 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
+
+export interface IUser extends Document {
+  email: string;
+  password?: string;
+  isVerified: boolean;
+  emailOtp?: string;
+  emailOtpExpires?: Date;
+  refreshToken?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  googleId?: string;
+  authProviders: ("local" | "google" | "github")[];
+  githubId?: string;
+  githubAccessToken?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const userSchema = new Schema(
   {
@@ -76,6 +93,6 @@ const userSchema = new Schema(
   }
 );
 
-export default model("User", userSchema);
+export default model<IUser>("User", userSchema);
 
 

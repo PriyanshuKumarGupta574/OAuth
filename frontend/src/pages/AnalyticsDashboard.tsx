@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-    Typography,
-    CircularProgress,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getUserAnalytics } from "../services/analytics.service";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ForkRightIcon from "@mui/icons-material/ForkRight";
 import CommentIcon from "@mui/icons-material/Comment";
 import CodeIcon from "@mui/icons-material/Code";
+import StatCard from "../components/StatCard";
+import LoadingState from "../components/LoadingState";
+import EmptyState from "../components/EmptyState";
 
 type Analytics = {
     totalSnippets: number;
@@ -39,13 +39,7 @@ export default function AnalyticsDashboard() {
     }, []);
 
     if (loading) {
-        return (
-            <DashboardLayout>
-                <div className="flex justify-center mt-20">
-                    <CircularProgress />
-                </div>
-            </DashboardLayout>
-        );
+        return <LoadingState />;
     }
 
     if (!analytics) {
@@ -101,20 +95,14 @@ export default function AnalyticsDashboard() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
                     {statCards.map((stat) => (
-                        <div
+                        <StatCard
                             key={stat.title}
-                            className={`p-8 rounded-3xl bg-gradient-to-br ${stat.gradient} border ${stat.border} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center flex flex-col items-center group`}
-                        >
-                            <div className="mb-4 p-4 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform">
-                                {stat.icon}
-                            </div>
-                            <Typography variant="h3" className="font-extrabold text-slate-800 tracking-tight">
-                                {stat.value}
-                            </Typography>
-                            <Typography variant="body2" className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">
-                                {stat.title}
-                            </Typography>
-                        </div>
+                            title={stat.title}
+                            value={stat.value}
+                            icon={stat.icon}
+                            gradient={stat.gradient}
+                            border={stat.border}
+                        />
                     ))}
                 </div>
 
@@ -152,14 +140,10 @@ export default function AnalyticsDashboard() {
                 )}
 
                 {analytics.totalSnippets === 0 && (
-                    <div className="bg-slate-50 p-12 rounded-3xl border border-dashed border-slate-300 text-center">
-                        <Typography variant="h6" className="text-slate-800 font-bold mb-2">
-                            You haven't created any snippets yet.
-                        </Typography>
-                        <Typography className="text-slate-500">
-                            Start creating snippets to see your analytics dashboard come to life!
-                        </Typography>
-                    </div>
+                    <EmptyState
+                        title="You haven't created any snippets yet."
+                        description="Start creating snippets to see your analytics dashboard come to life!"
+                    />
                 )}
             </div>
         </DashboardLayout>
