@@ -6,7 +6,7 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import AuthLayout from "../layout/AuthLayout";
 import { resetPassword } from "../services/auth.service";
 import { toast } from "react-toastify";

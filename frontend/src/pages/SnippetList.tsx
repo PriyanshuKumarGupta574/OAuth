@@ -13,7 +13,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import GroupIcon from "@mui/icons-material/Group";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import DashboardLayout from "../layout/DashboardLayout";
 import { snippetItemCard } from "../styles/snippet.styles";
 import { getSnippets } from "../services/snippet.service";

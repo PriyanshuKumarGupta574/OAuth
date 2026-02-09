@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Typography, TextField, Button, Alert } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import DashboardLayout from "../layout/DashboardLayout";
 import { createTeam } from "../services/team.service";
 

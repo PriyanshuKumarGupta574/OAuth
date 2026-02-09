@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import { Box, Card, Typography, Chip } from "@mui/material";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getSnippetsByFolder } from "../services/snippet.service";

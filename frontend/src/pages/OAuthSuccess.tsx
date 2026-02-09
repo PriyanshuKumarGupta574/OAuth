@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 

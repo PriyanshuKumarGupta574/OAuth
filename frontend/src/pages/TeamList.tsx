@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Button, Card, CardContent, Grid } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getMyTeams } from "../services/team.service";
 

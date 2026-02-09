@@ -8,7 +8,7 @@ import {
   Box,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router";
 import { loginUser } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";

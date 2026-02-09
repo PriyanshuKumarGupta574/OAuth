@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import DashboardLayout from "../layout/DashboardLayout";
 import { createFolder } from "../services/folder.service";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function CreateFolder() {
   const [name, setName] = useState("");

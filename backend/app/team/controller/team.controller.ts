@@ -37,7 +37,7 @@ export const getMyTeams = async (req: Request, res: Response) => {
 
 export const getTeamById = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params as { id: string };
         const userId = (req as any).user._id;
         const team = await getTeamByIdService(id, userId);
         res.json(team);
@@ -48,11 +48,11 @@ export const getTeamById = async (req: Request, res: Response) => {
 
 export const addMember = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params as { id: string };
         const { email, role } = req.body;
         const requesterId = (req as any).user._id;
 
-        // Find user by email
+
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "User not found with this email" });
@@ -67,7 +67,7 @@ export const addMember = async (req: Request, res: Response) => {
 
 export const removeMember = async (req: Request, res: Response) => {
     try {
-        const { id, memberId } = req.params;
+        const { id, memberId } = req.params as { id: string; memberId: string };
         const requesterId = (req as any).user._id;
 
         const team = await removeMemberService(id, requesterId, memberId);
@@ -79,10 +79,10 @@ export const removeMember = async (req: Request, res: Response) => {
 
 export const leaveTeam = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params as { id: string };
         const requesterId = (req as any).user._id;
 
-        // Member removing themselves
+
         const team = await removeMemberService(id, requesterId, requesterId);
         res.json({ message: "Left team successfully" });
     } catch (error: any) {
@@ -92,7 +92,7 @@ export const leaveTeam = async (req: Request, res: Response) => {
 
 export const updateMemberRole = async (req: Request, res: Response) => {
     try {
-        const { id, memberId } = req.params;
+        const { id, memberId } = req.params as { id: string; memberId: string };
         const { role } = req.body;
         const requesterId = (req as any).user._id;
 

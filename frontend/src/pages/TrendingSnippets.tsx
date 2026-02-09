@@ -7,7 +7,7 @@ import {
     Chip,
     CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getTrendingSnippets } from "../services/analytics.service";
 import VisibilityIcon from "@mui/icons-material/Visibility";

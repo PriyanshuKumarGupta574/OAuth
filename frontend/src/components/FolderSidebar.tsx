@@ -17,7 +17,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import { useDroppable } from "@dnd-kit/core";
 import {
   getFolders,

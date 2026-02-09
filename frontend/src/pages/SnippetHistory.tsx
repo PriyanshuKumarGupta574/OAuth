@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { Box, Card, Typography, Button, Stack } from "@mui/material";
 import { toast } from "react-toastify";
 import HistoryIcon from "@mui/icons-material/History";

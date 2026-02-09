@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { Box, Card, Typography } from "@mui/material";
 import Editor from "@monaco-editor/react";
 import { getPublicSnippet } from "../services/snippet.service";

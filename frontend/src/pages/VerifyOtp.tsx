@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { verifyEmailOtp, resendOtp } from "../services/auth.service";
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 
 type OtpForm = {

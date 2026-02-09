@@ -13,7 +13,7 @@ import {
 import { useForm } from "react-hook-form";
 import GoogleIcon from "@mui/icons-material/Google";
 import { registerUser } from "../services/auth.service";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 type RegisterForm = {

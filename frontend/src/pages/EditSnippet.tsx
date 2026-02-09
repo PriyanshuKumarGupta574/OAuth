@@ -13,7 +13,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import EditIcon from "@mui/icons-material/Edit";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import Editor from "@monaco-editor/react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { getSnippetById, updateSnippet } from "../services/snippet.service";

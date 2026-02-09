@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import DashboardLayout from "../layout/DashboardLayout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { getUserAnalytics } from "../services/analytics.service";
 import CodeIcon from "@mui/icons-material/Code";
 import VisibilityIcon from "@mui/icons-material/Visibility";

@@ -20,7 +20,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { styled } from "@mui/material/styles";
 import List from "@mui/material/List";
