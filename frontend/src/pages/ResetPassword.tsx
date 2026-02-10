@@ -8,23 +8,33 @@ import { useParams, useNavigate } from "react-router";
 import AuthLayout from "../layout/AuthLayout";
 import { resetPassword } from "../services/auth.service";
 import { toast } from "react-toastify";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type ResetForm = {
-  password: string;
-  confirmPassword: string;
-};
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type ResetForm = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<ResetForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetForm>({
+    resolver: zodResolver(resetPasswordSchema),
+  });
 
   const onSubmit = async (data: ResetForm) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
     try {
       await resetPassword(token!, data.password);
       toast.success("Password reset successful");
@@ -41,19 +51,23 @@ export default function ResetPassword() {
           Reset Password
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-4">
             <TextField
               label="New Password"
               type="password"
-              {...register("password", { required: true })}
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               className="[&_.MuiOutlinedInput-root]:rounded-xl"
             />
 
             <TextField
               label="Confirm Password"
               type="password"
-              {...register("confirmPassword", { required: true })}
+              {...register("confirmPassword")}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword?.message}
               className="[&_.MuiOutlinedInput-root]:rounded-xl"
             />
 

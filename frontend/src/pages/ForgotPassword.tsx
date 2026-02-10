@@ -7,13 +7,23 @@ import { useForm } from "react-hook-form";
 import AuthLayout from "../layout/AuthLayout";
 import { forgotPassword } from "../services/auth.service";
 import { toast } from "react-toastify";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type ForgotForm = {
-  email: string;
-};
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+type ForgotForm = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
-  const { register, handleSubmit } = useForm<ForgotForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotForm>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
   const onSubmit = async (data: ForgotForm) => {
     try {
@@ -35,11 +45,13 @@ export default function ForgotPassword() {
           Enter your email to receive a password reset link.
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-4">
             <TextField
               label="Email"
-              {...register("email", { required: true })}
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
               className="[&_.MuiOutlinedInput-root]:rounded-xl"
             />
 

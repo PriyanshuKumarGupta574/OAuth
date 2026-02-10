@@ -4,43 +4,31 @@ import {
     getTrendingSnippetsService,
     getUserAnalyticsService,
 } from "../services/analytics.service";
-import { handleError } from "../../common/utils/error.handler";
+import { catchError } from "../../common/middleware/catch-error.middleware";
 
-export const trackView = async (req: Request, res: Response) => {
-    try {
-        const snippetId = req.params.id as string;
-        const snippet = await trackViewService(snippetId);
+export const trackView = catchError(async (req: Request, res: Response) => {
+    const snippetId = req.params.id as string;
+    const snippet = await trackViewService(snippetId);
 
-        if (!snippet) {
-            return res.status(404).json({ message: "Snippet not found" });
-        }
-
-        res.json({ message: "View tracked", views: snippet.views });
-    } catch (error: unknown) {
-        handleError(res, error, "Failed to track view");
+    if (!snippet) {
+        res.status(404);
+        throw new Error("Snippet not found");
     }
-};
 
+    res.json({ message: "View tracked", views: snippet.views });
+});
 
-export const getTrendingSnippets = async (req: Request, res: Response) => {
-    try {
-        const limit = parseInt(req.query.limit as string) || 10;
-        const snippets = await getTrendingSnippetsService(limit);
+export const getTrendingSnippets = catchError(async (req: Request, res: Response) => {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const snippets = await getTrendingSnippetsService(limit);
 
-        res.json(snippets);
-    } catch (error: unknown) {
-        handleError(res, error, "Failed to get trending snippets");
-    }
-};
+    res.json(snippets);
+});
 
+export const getUserAnalytics = catchError(async (req: Request, res: Response) => {
+    const userId = req.user!._id;
+    const analytics = await getUserAnalyticsService(userId as string);
 
-export const getUserAnalytics = async (req: Request, res: Response) => {
-    try {
-        const userId = req.user!._id;
-        const analytics = await getUserAnalyticsService(userId as string);
+    res.json(analytics);
+});
 
-        res.json(analytics);
-    } catch (error: unknown) {
-        handleError(res, error, "Failed to get analytics");
-    }
-};

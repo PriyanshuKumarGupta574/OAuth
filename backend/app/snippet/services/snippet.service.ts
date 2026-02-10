@@ -3,6 +3,8 @@ import SnippetVersion from "../schema/snippetVersion.schema";
 import Team, { ITeam } from "../../team/schema/team.schema";
 import mongoose from "mongoose";
 
+type FilterQuery<T> = { [P in keyof T]?: any } & Record<string, any>;
+
 export interface CreateSnippetData {
   title: string;
   code: string;
@@ -33,13 +35,9 @@ export const createSnippetService = async (data: CreateSnippetData) => {
   const snippetData: Partial<ISnippet> = {
     ...data,
     author: new mongoose.Types.ObjectId(data.author),
+    team: data.team ? new mongoose.Types.ObjectId(data.team) : undefined,
+    folder: data.folder ? new mongoose.Types.ObjectId(data.folder) : undefined,
   };
-
-  if (data.team) snippetData.team = new mongoose.Types.ObjectId(data.team);
-  else delete snippetData.team;
-
-  if (data.folder) snippetData.folder = new mongoose.Types.ObjectId(data.folder);
-  else delete snippetData.folder;
 
   return await Snippet.create(snippetData);
 };
@@ -56,7 +54,7 @@ export const getAllSnippetsService = async (
   page: number = 1,
   limit: number = 6
 ) => {
-  const query: mongoose.FilterQuery<ISnippet> = {};
+  const query: FilterQuery<ISnippet> = {};
 
   if (teamId) {
     query.team = new mongoose.Types.ObjectId(teamId);

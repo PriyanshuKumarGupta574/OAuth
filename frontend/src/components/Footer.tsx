@@ -2,8 +2,33 @@ import { Typography, Link, IconButton, TextField, Button } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+
+const newsletterSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+type NewsletterForm = z.infer<typeof newsletterSchema>;
 
 export default function Footer() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewsletterForm>({
+    resolver: zodResolver(newsletterSchema),
+  });
+
+  const onSubmit = (data: NewsletterForm) => {
+    console.log("Subscribed:", data.email);
+    toast.success("Subscribed to newsletter!");
+    reset();
+  };
+
   return (
     <div className="bg-[#f8fafc] border-t border-[#e2e8f0] pt-12 pb-6 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,14 +78,17 @@ export default function Footer() {
             <Typography variant="body2" color="text.secondary" className="mb-4">
               Subscribe to our newsletter for the latest updates.
             </Typography>
-            <form noValidate autoComplete="off" className="flex gap-2">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex gap-2 items-start">
               <TextField
                 size="small"
                 placeholder="Enter your email"
                 fullWidth
+                {...register("email")}
+                error={!!errors.email}
+                helperText={errors.email?.message}
                 className="bg-white"
               />
-              <Button variant="contained" className="shadow-none bg-[#1a73e8] hover:bg-[#1557b0]">
+              <Button type="submit" variant="contained" className="shadow-none bg-[#1a73e8] hover:bg-[#1557b0] h-[40px]">
                 Subscribe
               </Button>
             </form>

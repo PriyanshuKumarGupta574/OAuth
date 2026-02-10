@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "env.local" }); // MUST be first
+dotenv.config({ path: "env.local" });
 
 import express from "express";
 import mongoose from "mongoose";
@@ -14,11 +14,7 @@ import folderRoutes from "./app/snippet/route/folder.routes";
 
 const app = express();
 
-/* ======================================================
-   MIDDLEWARE
-====================================================== */
 
-// ✅ Allow frontend + cookies (refresh token)
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -26,26 +22,23 @@ app.use(
   })
 );
 
-// ✅ Parse JSON body
 app.use(express.json());
 
-// ✅ Parse cookies (REQUIRED for refresh tokens)
 app.use(cookieParser());
 
-// ✅ Passport (Google OAuth)
 app.use(passport.initialize());
 
-/* ======================================================
-   ROUTES
-====================================================== */
-app.use("/api", routes);
+import { apiLimiter } from "./app/common/middleware/rate-limiter.middleware";
+import { errorHandler } from "./app/common/middleware/error.middleware";
+
+app.use("/api", apiLimiter, routes);
 
 
-app.use("/api/folders", folderRoutes);
+app.use("/api/folders", apiLimiter, folderRoutes);
 
-/* ======================================================
-   DATABASE + SERVER
-====================================================== */
+app.use(errorHandler);
+
+
 mongoose
   .connect(process.env.MONGO_URI!)
   .then(() => {

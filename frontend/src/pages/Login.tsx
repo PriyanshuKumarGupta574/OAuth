@@ -10,21 +10,30 @@ import { useNavigate, Link as RouterLink } from "react-router";
 import { loginUser } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type LoginForm = {
-  email: string;
-  password: string;
-};
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login({
   switchToRegister,
 }: {
   switchToRegister: () => void;
 }) {
-  const { register, handleSubmit } = useForm<LoginForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+  });
   const navigate = useNavigate();
   const { login } = useAuth();
-
 
   const onSubmit = async (data: LoginForm) => {
     try {
@@ -35,7 +44,6 @@ export default function Login({
 
       login(res.data.accessToken);
 
-
       navigate("/dashboard", { replace: true });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -43,7 +51,6 @@ export default function Login({
       toast.error(err.response?.data?.message || "Invalid credentials");
     }
   };
-
 
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:5000/api/auth/google";
@@ -61,7 +68,9 @@ export default function Login({
             label="Email"
             type="email"
             autoComplete="email"
-            {...register("email", { required: true })}
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
           />
@@ -70,7 +79,9 @@ export default function Login({
             label="Password"
             type="password"
             autoComplete="current-password"
-            {...register("password", { required: true })}
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
           />

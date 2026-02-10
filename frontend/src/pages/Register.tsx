@@ -4,48 +4,55 @@ import {
   Typography,
   Checkbox,
   FormControlLabel,
+  FormHelperText,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import GoogleIcon from "@mui/icons-material/Google";
 import { registerUser } from "../services/auth.service";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type RegisterForm = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  phone: string;
-  dob: string;
-  acceptTerms: boolean;
-};
+const registerSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    dob: z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date"),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms and conditions",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register({
   switchToLogin,
 }: {
   switchToLogin: () => void;
 }) {
-  const { register, handleSubmit } = useForm<RegisterForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+  });
   const navigate = useNavigate();
 
   const onSubmit = async (data: RegisterForm) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (!data.acceptTerms) {
-      toast.warn("Please accept Terms & Conditions");
-      return;
-    }
-
     try {
       await registerUser({
         email: data.email,
         password: data.password,
       });
-
 
       navigate("/verify-otp", {
         state: { email: data.email },
@@ -70,7 +77,9 @@ export default function Register({
         <div className="flex flex-col gap-5">
           <TextField
             label="Full Name"
-            {...register("name", { required: true })}
+            {...register("name")}
+            error={!!errors.name}
+            helperText={errors.name?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
             size="small"
@@ -79,7 +88,9 @@ export default function Register({
           <TextField
             label="Email"
             type="email"
-            {...register("email", { required: true })}
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
             size="small"
@@ -89,7 +100,9 @@ export default function Register({
             <TextField
               label="Phone"
               fullWidth
-              {...register("phone", { required: true })}
+              {...register("phone")}
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
               className="[&_.MuiOutlinedInput-root]:rounded-xl"
               variant="outlined"
               size="small"
@@ -100,7 +113,9 @@ export default function Register({
               type="date"
               fullWidth
               InputLabelProps={{ shrink: true }}
-              {...register("dob", { required: true })}
+              {...register("dob")}
+              error={!!errors.dob}
+              helperText={errors.dob?.message}
               className="[&_.MuiOutlinedInput-root]:rounded-xl"
               variant="outlined"
               size="small"
@@ -110,7 +125,9 @@ export default function Register({
           <TextField
             label="Password"
             type="password"
-            {...register("password", { required: true })}
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
             size="small"
@@ -119,7 +136,9 @@ export default function Register({
           <TextField
             label="Confirm Password"
             type="password"
-            {...register("confirmPassword", { required: true })}
+            {...register("confirmPassword")}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword?.message}
             className="[&_.MuiOutlinedInput-root]:rounded-xl"
             variant="outlined"
             size="small"
@@ -130,7 +149,7 @@ export default function Register({
               control={
                 <Checkbox
                   size="small"
-                  {...register("acceptTerms", { required: true })}
+                  {...register("acceptTerms")}
                   className="text-[#1a73e8]"
                 />
               }
@@ -140,6 +159,11 @@ export default function Register({
                 </Typography>
               }
             />
+            {errors.acceptTerms && (
+              <FormHelperText error className="ml-4">
+                {errors.acceptTerms.message}
+              </FormHelperText>
+            )}
           </div>
 
           <Button

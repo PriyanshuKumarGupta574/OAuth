@@ -13,17 +13,18 @@ import {
   refreshToken,
 } from "../controller/auth.controller";
 import { generateAccessToken, generateRefreshToken } from "../../common/services/jwt.service";
+import { authLimiter } from "../../common/middleware/rate-limiter.middleware";
 
 const router = Router();
 
-router.post("/register", register);
-router.post("/verify-otp", verifyEmailOtp);
-router.post("/resend-otp", resendOtp);
-router.post("/login", login);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
-router.post("/refresh-token", refreshToken);
-router.post("/logout", logout);
+router.post("/register", authLimiter, register);
+router.post("/verify-otp", authLimiter, verifyEmailOtp);
+router.post("/resend-otp", authLimiter, resendOtp);
+router.post("/login", authLimiter, login);
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/reset-password/:token", authLimiter, resetPassword);
+router.post("/refresh-token", authLimiter, refreshToken);
+router.post("/logout", authLimiter, logout);
 
 
 router.get(

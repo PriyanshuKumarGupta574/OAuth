@@ -6,23 +6,34 @@ import {
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { verifyEmailOtp, resendOtp } from "../services/auth.service";
-
 import { useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import AuthLayout from "../layout/AuthLayout";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type OtpForm = {
-  otp: string;
-};
+const otpSchema = z.object({
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d+$/, "OTP must contain only numbers"),
+});
+
+type OtpForm = z.infer<typeof otpSchema>;
 
 export default function VerifyOtp() {
-  const { register, handleSubmit } = useForm<OtpForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<OtpForm>({
+    resolver: zodResolver(otpSchema),
+  });
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-
 
   const { email } = (location.state as { email: string }) || {};
 
@@ -63,7 +74,6 @@ export default function VerifyOtp() {
     }, 1000);
   };
 
-
   return (
     <AuthLayout>
       <div className="w-[420px] p-8 rounded-2xl bg-gradient-to-br from-white to-[#92a1b6] shadow-2xl border-none">
@@ -75,11 +85,13 @@ export default function VerifyOtp() {
           Enter the 6-digit OTP sent to <b className="text-slate-800">{email}</b>
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-4">
             <TextField
               label="OTP"
-              {...register("otp", { required: true })}
+              {...register("otp")}
+              error={!!errors.otp}
+              helperText={errors.otp?.message}
               inputProps={{ maxLength: 6 }}
               className="[&_.MuiOutlinedInput-root]:rounded-xl text-center tracking-[0.5em] font-mono"
             />
